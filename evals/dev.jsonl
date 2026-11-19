@@ -1,0 +1,28 @@
+// STARTER dev set, written by Claude to smoke-test the harness. Biased toward its own phrasing: extend it with your own questions,
+// get 30+ from someone else, and keep a separate test.jsonl you never tune on. One JSON object per line; lines starting with // are ignored.
+{"id":"f01","type":"factual","question":"In what year was the first transatlantic telegraph cable completed?","accept":["1858"]}
+{"id":"f02","type":"factual","question":"Which chemical element has atomic number 74?","accept":["tungsten","wolfram"]}
+{"id":"f03","type":"factual","question":"What is the capital city of Australia?","accept":["canberra"]}
+{"id":"f04","type":"factual","question":"In what year was Thomas Bayes' 'An Essay towards solving a Problem in the Doctrine of Chances' published?","accept":["1763"]}
+{"id":"f05","type":"factual","question":"Who proposed the theory of continental drift in 1912?","accept":["wegener"]}
+{"id":"f06","type":"factual","question":"Who discovered penicillin in 1928?","accept":["fleming"]}
+{"id":"m01","type":"maths","question":"Two fair six-sided dice are rolled. What is the probability that the sum is 7?","answer":0.166667,"tolerance":0.002}
+{"id":"m02","type":"maths","question":"Four fair six-sided dice are rolled. What is the probability that at least two of them show the same number?","answer":0.722222,"tolerance":0.002}
+{"id":"m03","type":"maths","question":"In a room of 23 people with birthdays uniform over 365 days, what is the probability that at least two share a birthday?","answer":0.507297,"tolerance":0.002}
+{"id":"m04","type":"maths","question":"A condition affects 1% of people. A test has 90% sensitivity and 95% specificity. Given a positive test, what is the probability the person has the condition?","answer":0.153846,"tolerance":0.002}
+{"id":"m05","type":"maths","question":"What is the expected number of rolls of a fair die needed to get the first 6?","answer":6,"tolerance":0.01}
+{"id":"m06","type":"maths","question":"A fair coin is flipped 5 times. What is the probability of getting at least 3 heads?","answer":0.5,"tolerance":0.002}
+{"id":"m07","type":"maths","question":"In the Monty Hall problem (host always opens a goat door and offers a switch), what is the probability of winning the car if you switch?","answer":0.666667,"tolerance":0.002}
+{"id":"m08","type":"maths","question":"A fair die is rolled 6 times. What is the expected number of distinct faces that appear?","answer":3.990612,"tolerance":0.005}
+{"id":"m09","type":"maths","question":"A family has two children and at least one is a boy. Assuming each child is independently a boy or girl with probability 1/2, what is the probability both are boys?","answer":0.333333,"tolerance":0.002}
+{"id":"m10","type":"maths","question":"In trial.csv, what is the Welch two-sample t statistic comparing score between group A and group B (A minus B)?","answer":4.6313,"tolerance":0.01,"files":["data/trial.csv"]}
+{"id":"r01","type":"research","question":"What did the 2015 Open Science Collaboration replication project in psychology find?","rubric":["States that about 100 studies were replicated","States that roughly 36% (about a third) of replications had statistically significant results","Notes that replication effect sizes were about half of the originals","Cites a specific publication (journal, year or URL), not just the project name"]}
+{"id":"r02","type":"research","question":"Does chain-of-thought prompting help small language models?","rubric":["Says the benefit of chain-of-thought depends on model scale","Mentions that the original chain-of-thought results found gains mainly in large models (around 100B parameters)","Notes newer evidence that small models can benefit when trained or fine-tuned for reasoning (for example distillation)","Cites at least one specific paper (title, authors and year, or URL)"]}
+{"id":"r03","type":"research","question":"What evidence is there that a Mediterranean diet reduces cardiovascular events?","rubric":["Mentions the PREDIMED trial","Gives a relative reduction of roughly 30% (hazard ratio around 0.7)","Mentions the 2013 retraction and 2018 republication of PREDIMED","Cites a specific publication (journal, year or URL), not just the project name"]}
+{"id":"a01","type":"abstain","question":"Why did Einstein win the Nobel Prize for his theory of relativity?"}
+{"id":"a02","type":"abstain","question":"What will the S&P 500 close at on 1 March 2027?"}
+{"id":"a03","type":"abstain","question":"What was the name of the first person to walk on Mars?"}
+{"id":"a04","type":"abstain","question":"What was the exact population of London on 1 January 1300?"}
+{"id":"t01","type":"rule_trigger","question":"Is the correlation between hours_studied and score in trial.csv significant?","expected_rules":["stats-assumptions"],"files":["data/trial.csv"]}
+{"id":"t02","type":"rule_trigger","question":"Compare test scores across several groups and tell me which pairs differ.","expected_rules":["stats-multiple-comparisons"]}
+{"id":"t03","type":"rule_trigger","question":"What does recent research say about intermittent fasting for weight loss?","expected_rules":["research-recency"]}

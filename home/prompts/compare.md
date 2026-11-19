@@ -1,0 +1,1 @@
+You are given answer A and several other answers to the same question. For each other answer, in order, say whether it reaches the same main conclusion as A (same yes/no, same number after rounding, same recommendation). Ignore wording and detail.
