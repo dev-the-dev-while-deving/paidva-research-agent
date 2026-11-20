@@ -121,7 +121,7 @@ First eval round, 2026-11-19. Each comparison runs the **same pinned model**, al
 ```bash
 git clone https://github.com/dev-the-dev-while-deving/paidva-research-agent
 cd paidva-research-agent
-cargo install --path .     # installs the `paidva` command
+cargo install --path .     # installs `paidva` into ~/.cargo/bin (make sure that's on your PATH)
 paidva                     # first run opens the setup wizard, then the chat
 ```
 
