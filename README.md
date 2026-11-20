@@ -12,7 +12,7 @@
 [![Local](https://img.shields.io/badge/runs-locally_with_Qwen_3.5_9B-A0CFD0?style=for-the-badge&labelColor=291800)](#recommended-run-the-model-on-your-mac)
 
 **A research and statistics agent for your terminal that shows its work.**
-Every number comes from sandboxed Python, every quote is matched word for word, and confidence is computed from what passed the checks. Runs fully on your Mac with Qwen 3.5 9B, or on free cloud models.
+Every number comes from sandboxed Python, every quote is matched word for word, and confidence is computed from what passed the checks. Runs fully on your machine with Qwen 3.5 9B, or on free cloud models.
 
 **[Install](#install)** · **[What you see](#what-you-see)** · **[Why](#why-paidva)** · **[Results](#results)** · **[Commands](#commands)**
 
@@ -20,7 +20,7 @@ Every number comes from sandboxed Python, every quote is matched word for word, 
 
 ## Install
 
-You need a Mac and [uv](https://docs.astral.sh/uv/) (for the Python sandbox). Then:
+Runs on **macOS** (Apple Silicon; Intel builds coming), **Linux** (x86_64 and ARM64) and **Windows through [WSL](https://learn.microsoft.com/windows/wsl/install)** (open Ubuntu and use the Linux build). You need [uv](https://docs.astral.sh/uv/) for the Python sandbox, and on Linux/WSL also bubblewrap (`sudo apt install bubblewrap`). Then:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/dev-the-dev-while-deving/paidva-research-agent/main/install.sh | sh
@@ -29,12 +29,13 @@ paidva
 
 The first run is a short setup: workspace, model, optional keys, sandbox. Paidva tells you when a new version is out; `paidva update` installs it.
 
-### Recommended: run the model on your Mac
+### Recommended: run the model on your machine
 
 Paidva works best with **Qwen 3.5 9B** running locally through [Ollama](https://ollama.com). Install both yourself:
 
 ```bash
-brew install ollama
+brew install ollama                               # macOS
+curl -fsSL https://ollama.com/install.sh | sh     # Linux / WSL
 ollama pull qwen3.5:9b-q4_K_M
 ```
 
@@ -42,7 +43,7 @@ Paidva finds it on its own and uses it first (setup and `paidva settings` › Lo
 
 | | Local (Qwen 3.5 9B) | Cloud (free tiers) |
 |---|---|---|
-| Privacy | Questions and data never leave your Mac | Sent to the provider |
+| Privacy | Questions and data never leave your machine | Sent to the provider |
 | Limits | None | Groq: 200k tokens a day; one request can't exceed ~8k tokens |
 | Keys | None needed | One free key (Groq, Gemini or OpenRouter) |
 | Speed | About 1–4 minutes an answer | About 10–60 seconds |
