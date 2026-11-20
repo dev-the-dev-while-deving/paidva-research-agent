@@ -1,0 +1,30 @@
+# On a version tag (v*), build macOS binaries and attach them to a GitHub release for install.sh.
+name: release
+on:
+  push:
+    tags: ["v*"]
+permissions:
+  contents: write
+jobs:
+  build:
+    strategy:
+      matrix:
+        target: [aarch64-apple-darwin, x86_64-apple-darwin]
+    runs-on: macos-14
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TAG: ${{ github.ref_name }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: rustup target add ${{ matrix.target }}
+      - run: cargo build --release --locked --target ${{ matrix.target }}
+      - name: Package
+        run: |
+          cd target/${{ matrix.target }}/release
+          tar czf paidva-${{ matrix.target }}.tar.gz paidva
+          shasum -a 256 paidva-${{ matrix.target }}.tar.gz > paidva-${{ matrix.target }}.tar.gz.sha256
+      - name: Upload to the release
+        run: |
+          # Both jobs try to create it; whichever loses finds it already there.
+          gh release create "$TAG" --verify-tag --title "Paidva $TAG" --generate-notes || true
+          gh release upload "$TAG" --clobber target/${{ matrix.target }}/release/paidva-${{ matrix.target }}.tar.gz*
