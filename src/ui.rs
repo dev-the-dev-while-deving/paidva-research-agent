@@ -92,8 +92,18 @@ fn emit(line: String) {
     }
 }
 
+/// Progress for the full-screen UI. While `SINK` holds a sender, steps and notes go there instead of the spinner.
+pub enum Event { Step(String, String), Note(String) }
+pub static SINK: Mutex<Option<std::sync::mpsc::Sender<Event>>> = Mutex::new(None);
+
+/// True when the event went to the full-screen UI.
+fn sent(e: impl FnOnce() -> Event) -> bool {
+    SINK.lock().unwrap().as_ref().map(|tx| tx.send(e()).is_ok()).unwrap_or(false)
+}
+
 /// One finished pipeline step, e.g. "  ◆ python      compute ppv            3.1s".
 pub fn step(name: &str, detail: &str) {
+    if sent(|| Event::Step(name.into(), detail.into())) { return; }
     let secs = BUSY.lock().unwrap().as_ref().map(|(pb, t)| { pb.set_message(format!("{name} done · working")); t.elapsed().as_secs_f64() });
     if !crate::config::get().ui.show_steps { return; }
     let detail: String = detail.chars().take(width().saturating_sub(LABEL_W + 16)).collect();
@@ -102,7 +112,7 @@ pub fn step(name: &str, detail: &str) {
 }
 
 /// A side note (rate-limit waits and the like).
-pub fn note(msg: &str) { emit(format!("  {} {}", dim("…"), dim(msg))); }
+pub fn note(msg: &str) { if sent(|| Event::Note(msg.into())) { return; } emit(format!("  {} {}", dim("…"), dim(msg))); }
 
 // ───────────────────────── answer view (stdout) ─────────────────────────
 
@@ -122,8 +132,8 @@ fn spark(trail: &[f64]) -> String {
     trail.iter().map(|p| B[((p.clamp(0.0, 1.0) * 7.0).round()) as usize]).collect()
 }
 
-pub fn answer(a: &Answer, ev: &[Evidence], r: &Report, st: &Stats) {
-    let w = width();
+/// The answer view, wrapped to `w` columns (`r.errors` are left to the caller).
+pub fn answer(a: &Answer, ev: &[Evidence], r: &Report, st: &Stats, w: usize) -> String {
     let ind = 2 + LABEL_W;
     let mut o = String::from("\n");
     o += &format!("  {} {}\n", accent("▌"), style(wrap(&a.direct_answer, w, 4)).bold());
@@ -183,8 +193,7 @@ pub fn answer(a: &Answer, ev: &[Evidence], r: &Report, st: &Stats) {
     facts.push(format!("{:.1}s", st.secs));
     o += &format!("  {}\n", dim(facts.join(" · ")));
     if r.confidence < 0.45 { o += &format!("  {} {}\n", accent("⚠"), accent("low confidence: treat this as a lead, not an answer")); }
-    print!("{o}");
-    for e in &r.errors { eprintln!("  {} {}", dim("note:"), dim(e)); }
+    o
 }
 
 /// Sources a claim or belief step actually cites, one entry per URL: (url, title, ids).
@@ -205,26 +214,29 @@ pub fn cited_sources<'a>(a: &Answer, ev: &'a [Evidence]) -> Vec<Cited<'a>> {
 }
 
 /// Every source read (cited or not), with the passage text.
-pub fn sources(ev: &[Evidence]) {
-    let w = width();
+pub fn sources(ev: &[Evidence], w: usize) -> String {
     let src: Vec<&Evidence> = ev.iter().filter(|e| e.kind == Kind::Source).collect();
-    if src.is_empty() { println!("  {}", dim("no sources were read for the last answer")); return; }
+    if src.is_empty() { return format!("  {}\n", dim("no sources were read for the last answer")); }
+    let mut o = String::new();
     for e in src {
-        println!("\n  {} {}{}", accent(format!("[{}]", e.id)), style(wrap(&e.title, width(), 3 + e.id.len() + 3)).bold(), if e.partial { dim("  (abstract only)").to_string() } else { String::new() });
-        if !e.url.is_empty() { println!("      {}", style(&e.url).dim().underlined()); }
-        println!("      {}", dim(wrap(&e.text.chars().take(500).collect::<String>(), w, 6)));
+        o += &format!("\n  {} {}{}\n", accent(format!("[{}]", e.id)), style(wrap(&e.title, w, 3 + e.id.len() + 3)).bold(), if e.partial { dim("  (abstract only)").to_string() } else { String::new() });
+        if !e.url.is_empty() { o += &format!("      {}\n", style(&e.url).dim().underlined()); }
+        o += &format!("      {}\n", dim(wrap(&e.text.chars().take(500).collect::<String>(), w, 6)));
     }
+    o
 }
 
 /// The Python behind every computation, with its output.
-pub fn code(ev: &[Evidence]) {
+pub fn code(ev: &[Evidence], w: usize) -> String {
     let comps: Vec<&Evidence> = ev.iter().filter(|e| e.kind == Kind::Computation).collect();
-    if comps.is_empty() { println!("  {}", dim("no code ran for the last answer")); return; }
+    if comps.is_empty() { return format!("  {}\n", dim("no code ran for the last answer")); }
+    let mut o = String::new();
     for e in comps {
-        println!("\n  {} {}", accent(format!("[{}]", e.id)), style(wrap(&e.title, width(), 3 + e.id.len() + 3)).bold());
-        for l in e.code.lines() { println!("  {} {}", dim("│"), l); }
-        println!("  {} {}", dim("└─ output"), dim(e.text.lines().take(12).collect::<Vec<_>>().join(" ⏎ ")));
+        o += &format!("\n  {} {}\n", accent(format!("[{}]", e.id)), style(wrap(&e.title, w, 3 + e.id.len() + 3)).bold());
+        for l in e.code.lines() { o += &format!("  {} {}\n", dim("│"), l); }
+        o += &format!("  {} {}\n", dim("└─ output"), dim(e.text.lines().take(12).collect::<Vec<_>>().join(" ⏎ ")));
     }
+    o
 }
 
 // ───────────────────────── trace view (/why) ─────────────────────────
@@ -259,7 +271,7 @@ pub fn trace() -> anyhow::Result<()> {
         }
     }
     let ev: Vec<Evidence> = serde_json::from_value(v["evidence"].clone()).unwrap_or_default();
-    if !ev.is_empty() { println!("\n{}{} item{}", label("EVIDENCE"), ev.len(), if ev.len() == 1 { "" } else { "s" }); sources(&ev); code(&ev); }
+    if !ev.is_empty() { println!("\n{}{} item{}", label("EVIDENCE"), ev.len(), if ev.len() == 1 { "" } else { "s" }); print!("{}{}", sources(&ev, w), code(&ev, w)); }
     let calls = v["calls"].as_array().cloned().unwrap_or_default();
     let tokens: u64 = calls.iter().filter_map(|c| c["tokens"].as_u64()).sum();
     let cached = calls.iter().filter(|c| c["cached"].as_bool() == Some(true)).count();

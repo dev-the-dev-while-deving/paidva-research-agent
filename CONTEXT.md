@@ -3,7 +3,7 @@
 Design docs: `../V1 - Research & Conversational Agent/` (PRD, plan, framework).
 
 ## Stack
-- Rust 1.99 (edition 2024), one crate `agent`, binary `paidva`. Deps: tokio, reqwest (rustls, json), serde/serde_json, schemars, clap, rusqlite (bundled), anyhow, sha2, scraper, quick-xml; terminal: console, dialoguer (prompts, hidden key entry, fuzzy search), indicatif (spinner), rustyline (chat line editing + history).
+- Rust 1.99 (edition 2024), one crate `agent`, binary `paidva`. Deps: tokio, reqwest (rustls, json), serde/serde_json, schemars, clap, rusqlite (bundled), anyhow, sha2, scraper, quick-xml; terminal: console, dialoguer (prompts, hidden key entry, fuzzy search), indicatif (spinner), rustyline (line REPL), ratatui 0.30 + ansi-to-tui (full-screen chat).
 - Model: Groq, OpenAI-compatible, strict `json_schema` output (verified on all 3 models).
   - writer/planner/analyst: `openai/gpt-oss-120b` · router/checker: `openai/gpt-oss-20b` · fallback: `qwen/qwen3.8-27b`
 - Python sandbox: uv venv at `~/.agent/py` (numpy, scipy, pandas, statsmodels, sympy, scikit-learn), run under macOS `sandbox-exec` (no network, writes only to a temp dir, 30 s timeout).
@@ -17,7 +17,8 @@ Design docs: `../V1 - Research & Conversational Agent/` (PRD, plan, framework).
 - `src/sandbox.rs` · `src/search.rs` (wikipedia, arxiv, semantic scholar, web) · `src/fetch.rs`
 - `src/agent.rs` the loop: assemble → route → plan → act → draft → verify → score → trace
 - `src/verify.rs` · `src/stats.rs` · `src/main.rs` (CLI, binary `paidva`: chat (default), `ask`, `setup`, `settings`, `doctor`, `init`, `trace`, `eval`, `report`)
-- `src/ui.rs` colours, spinner, answer/trace views (answers → stdout, progress → stderr) · `src/setup.rs` wizard, settings, doctor · `src/config.rs` `~/.agent/config.toml` (model chains, ui, sandbox timeout) + keys in `~/.agent/.env` (mode 600)
+- `src/ui.rs` colours, spinner, answer/sources/code views returning ANSI strings (answers → stdout, progress → stderr; `ui::SINK` reroutes steps/notes to the TUI)
+- `src/tui.rs` full-screen chat (home + horse `src/horse.txt`, transcript, panel tabs Steps/Claims/Sources/Code/Reasoning); `ui.tui = false` or a non-terminal falls back to the REPL · `src/setup.rs` wizard, settings, doctor · `src/config.rs` `~/.agent/config.toml` (model chains, ui, sandbox timeout) + keys in `~/.agent/.env` (mode 600)
 - `src/eval.rs` + `evals/dev.jsonl` (starter set) → `evals/results/<set>-<system>-<model>.jsonl` (append-only, resumes)
 - `~/.agent/`: `agent.md`, `rules.toml`, `skills/*/SKILL.md`, `prompts/*.md`, `traces/`, `cache.db`
 
@@ -37,7 +38,7 @@ Design docs: `../V1 - Research & Conversational Agent/` (PRD, plan, framework).
 | Sandbox | sandbox-exec + uv venv | Docker | weaker isolation, macOS-only | Docker installed / Linux |
 | Search | Wikipedia + arXiv + Semantic Scholar APIs (no general web) | DDG scraping (dropped: evades bot detection), SearXNG | no news/blogs; S2 429s without `S2_API_KEY` | add Brave/Tavily key or pip-installed SearXNG |
 | Ranking | keyword (BM25-style) | fastembed | misses paraphrases | recall visibly poor in traces |
-| UI | styled line output + dialoguer prompts + rustyline REPL | ratatui full-screen TUI | no panes/scrollback widgets | users ask for side-by-side trace view |
+| UI | ratatui TUI reusing the line-mode ANSI views (ansi-to-tui); keyboard polled every 80 ms | second native renderer, mouse, EventStream | no mouse; re-renders the transcript each frame | long chats feel slow → cache rendered entries |
 | Calibration | raw score, labelled "uncalibrated" | isotonic fit | not yet honest % | eval harness exists |
 
 ## Agents must not touch

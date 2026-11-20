@@ -8,6 +8,7 @@ mod sandbox;
 mod search;
 mod setup;
 mod stats;
+mod tui;
 mod ui;
 mod verify;
 
@@ -97,7 +98,8 @@ async fn ask(agent: &Agent, q: &str, files: &[PathBuf], history: &[(String, Stri
             let calls = agent.llm.calls.lock().unwrap();
             let st = ui::Stats { calls: calls.len(), tokens: calls.iter().map(|c| c.tokens).sum(), secs: t.elapsed().as_secs_f64() };
             drop(calls);
-            ui::answer(&answer, &evidence, &report, &st);
+            print!("{}", ui::answer(&answer, &evidence, &report, &st, ui::width()));
+            for e in &report.errors { eprintln!("  {} {}", dim("note:"), dim(e)); }
             Ok(Some((answer, evidence, report)))
         }
     }
@@ -135,6 +137,9 @@ fn help() {
 }
 
 async fn chat(mut files: Vec<PathBuf>) -> Result<()> {
+    // Full screen on a real terminal; the line REPL when piped, on TERM=dumb, or with `ui.tui = false`.
+    let dumb = std::env::var("TERM").is_ok_and(|t| t == "dumb");
+    if config::get().ui.tui && console::Term::stdout().is_term() && !dumb { return tui::run(files).await; }
     banner(&files);
     let agent = Agent::new()?;
     let mut rl = rustyline::DefaultEditor::new()?;
@@ -160,8 +165,8 @@ async fn chat(mut files: Vec<PathBuf>) -> Result<()> {
             "/quit" | "/exit" | "/q" => break,
             "/help" | "/?" => help(),
             "/why" => ui::trace().unwrap_or_else(|e| println!("  {}", dim(e))),
-            "/sources" => match &last { Some((_, ev, _)) => ui::sources(ev), None => none() },
-            "/code" => match &last { Some((_, ev, _)) => ui::code(ev), None => none() },
+            "/sources" => match &last { Some((_, ev, _)) => print!("{}", ui::sources(ev, ui::width())), None => none() },
+            "/code" => match &last { Some((_, ev, _)) => print!("{}", ui::code(ev, ui::width())), None => none() },
             "/json" => match &last {
                 Some((a, ev, r)) => println!("{}", serde_json::to_string_pretty(&serde_json::json!({"answer": a, "evidence": ev, "report": r}))?),
                 None => none(),

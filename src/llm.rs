@@ -45,6 +45,9 @@ pub struct CallLog {
     pub ms: u128,
     pub tokens: u64,
     pub cached: bool,
+    /// The model's own reasoning text when the provider returns it (gpt-oss on Groq does), cached alongside the reply.
+    #[serde(skip_serializing_if = "String::is_empty")]
+    pub reasoning: String,
 }
 
 pub struct Llm {
@@ -179,7 +182,8 @@ impl Llm {
                 // Groq bodies hash exactly as before, so existing cache entries stay valid.
                 let ck = cache_key(&body, sample);
                 if let Some(v) = self.cache_get(&ck)? {
-                    self.log(step, model, 0, 0, true);
+                    let reasoning = self.cache_get(&format!("{ck}:r"))?.unwrap_or_default();
+                    self.log(step, model, 0, 0, true, reasoning);
                     return Ok(v);
                 }
                 // Pace instead of erroring: if this request won't fit in the model's remaining tokens for the
@@ -243,16 +247,19 @@ impl Llm {
                 let content = v["choices"][0]["message"]["content"].as_str().ok_or_else(|| anyhow!("{model}: empty reply"))?;
                 // json_object mode may wrap the JSON in a code fence.
                 let content = content.trim().trim_start_matches("```json").trim_start_matches("```").trim_end_matches("```").trim().to_string();
-                self.log(step, model, t.elapsed().as_millis(), v["usage"]["total_tokens"].as_u64().unwrap_or(0), false);
+                let msg = &v["choices"][0]["message"];
+                let reasoning: String = msg["reasoning"].as_str().or(msg["reasoning_content"].as_str()).unwrap_or("").chars().take(4000).collect();
+                self.log(step, model, t.elapsed().as_millis(), v["usage"]["total_tokens"].as_u64().unwrap_or(0), false, reasoning.clone());
                 self.cache_put(&ck, &content)?;
+                if !reasoning.is_empty() { self.cache_put(&format!("{ck}:r"), &reasoning)?; }
                 return Ok(content);
             }
         }
         bail!("{step}: all models failed: {last_err}")
     }
 
-    fn log(&self, step: &str, model: &str, ms: u128, tokens: u64, cached: bool) {
-        self.calls.lock().unwrap().push(CallLog { step: step.into(), model: model.into(), ms, tokens, cached });
+    fn log(&self, step: &str, model: &str, ms: u128, tokens: u64, cached: bool, reasoning: String) {
+        self.calls.lock().unwrap().push(CallLog { step: step.into(), model: model.into(), ms, tokens, cached, reasoning });
     }
     fn cache_get(&self, k: &str) -> Result<Option<String>> {
         Ok(self.cache.lock().unwrap().query_row("SELECT v FROM cache WHERE k=?1", [k], |r| r.get(0)).optional()?)

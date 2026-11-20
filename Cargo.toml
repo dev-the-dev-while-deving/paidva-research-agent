@@ -7,6 +7,7 @@ description = "A research and statistics agent that shows its work."
 repository = "https://github.com/dev-the-dev-while-deving/paidva-research-agent"
 
 [dependencies]
+ansi-to-tui = "8"
 anyhow = "1.0.104"
 clap = { version = "4.6.8", features = ["derive"] }
 console = "0.15"
@@ -15,6 +16,7 @@ futures = "0.3.34"
 hex = "0.4.3"
 indicatif = "0.17"
 libc = "0.2.191"
+ratatui = { version = "0.30", default-features = false, features = ["crossterm"] }
 reqwest = { version = "0.13.5", default-features = false, features = ["rustls", "json", "query", "form", "gzip"] }
 rusqlite = { version = "0.43.0", features = ["bundled"] }
 rustyline = { version = "19", default-features = false, features = ["with-file-history"] }

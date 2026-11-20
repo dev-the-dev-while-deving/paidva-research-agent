@@ -43,6 +43,8 @@ pub struct Ui {
     pub color: String,
     /// Show each step (route, search, python, verify …) while an answer is being built.
     pub show_steps: bool,
+    /// Full-screen chat on a terminal (false: the line-by-line REPL).
+    pub tui: bool,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
@@ -57,7 +59,7 @@ impl Default for Models {
     }
 }
 impl Default for Ui {
-    fn default() -> Self { Self { color: "auto".into(), show_steps: true } }
+    fn default() -> Self { Self { color: "auto".into(), show_steps: true, tui: true } }
 }
 impl Default for Sandbox {
     fn default() -> Self { Self { timeout_secs: 30 } }
