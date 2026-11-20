@@ -196,6 +196,9 @@ fn shellish(p: &str) -> String {
 
 #[tokio::main]
 async fn main() -> Result<()> {
+    // Exit quietly when piped into `head` and friends, instead of panicking on a closed pipe.
+    // SAFETY: called before any other thread starts.
+    unsafe { libc::signal(libc::SIGPIPE, libc::SIG_DFL) };
     config::load_env();
     ui::init();
     match Cli::parse().cmd {

@@ -116,14 +116,26 @@ First eval round, 2026-11-19. Each comparison runs the **same pinned model**, al
 
 ## ✦ Quick start
 
-**You need:** Rust, macOS (for `sandbox-exec`), [uv](https://docs.astral.sh/uv/), and one free API key. [Groq](https://console.groq.com) is the default; Gemini and OpenRouter also work.
+**You need:** macOS (for `sandbox-exec`), [uv](https://docs.astral.sh/uv/) for the Python sandbox, and one free API key. [Groq](https://console.groq.com) is the default; Gemini and OpenRouter also work.
+
+**Install in one line** (a prebuilt binary, checksum-verified, no Rust needed):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/dev-the-dev-while-deving/paidva-research-agent/main/install.sh | sh
+```
+
+Then run `paidva`. The first run opens the setup wizard, then the chat.
+
+<details>
+<summary>Build from source instead</summary>
 
 ```bash
 git clone https://github.com/dev-the-dev-while-deving/paidva-research-agent
 cd paidva-research-agent
 cargo install --path .     # installs `paidva` into ~/.cargo/bin (make sure that's on your PATH)
-paidva                     # first run opens the setup wizard, then the chat
 ```
+
+</details>
 
 **The setup wizard** walks you through everything in about two minutes:
 
