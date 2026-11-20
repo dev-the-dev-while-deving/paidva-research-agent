@@ -1,5 +1,5 @@
 [package]
-name = "agent"
+name = "paidva"
 version = "0.1.0"
 edition = "2024"
 license = "AGPL-3.0-or-later"
@@ -9,10 +9,14 @@ repository = "https://github.com/dev-the-dev-while-deving/paidva-research-agent"
 [dependencies]
 anyhow = "1.0.104"
 clap = { version = "4.6.8", features = ["derive"] }
+console = "0.15"
+dialoguer = { version = "0.11", features = ["fuzzy-select"] }
 futures = "0.3.34"
 hex = "0.4.3"
+indicatif = "0.17"
 reqwest = { version = "0.13.5", default-features = false, features = ["rustls", "json", "query", "form", "gzip"] }
 rusqlite = { version = "0.43.0", features = ["bundled"] }
+rustyline = { version = "19", default-features = false, features = ["with-file-history"] }
 schemars = "1.2.3"
 scraper = "0.29.0"
 serde = { version = "1.0.229", features = ["derive"] }

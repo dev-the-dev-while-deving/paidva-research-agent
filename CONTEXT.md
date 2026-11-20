@@ -3,11 +3,11 @@
 Design docs: `../V1 - Research & Conversational Agent/` (PRD, plan, framework).
 
 ## Stack
-- Rust 1.99 (edition 2024), one crate `agent`, binary `agent`. Deps: tokio, reqwest (rustls, json), serde/serde_json, schemars, clap, rusqlite (bundled), anyhow, sha2, scraper, quick-xml.
+- Rust 1.99 (edition 2024), one crate `agent`, binary `paidva`. Deps: tokio, reqwest (rustls, json), serde/serde_json, schemars, clap, rusqlite (bundled), anyhow, sha2, scraper, quick-xml; terminal: console, dialoguer (prompts, hidden key entry, fuzzy search), indicatif (spinner), rustyline (chat line editing + history).
 - Model: Groq, OpenAI-compatible, strict `json_schema` output (verified on all 3 models).
   - writer/planner/analyst: `openai/gpt-oss-120b` · router/checker: `openai/gpt-oss-20b` · fallback: `qwen/qwen3.8-27b`
 - Python sandbox: uv venv at `~/.agent/py` (numpy, scipy, pandas, statsmodels, sympy, scikit-learn), run under macOS `sandbox-exec` (no network, writes only to a temp dir, 30 s timeout).
-- Keys: `GROQ_API_KEY`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY` from `.env` (gitignored, mode 600). Never log or commit them.
+- Keys: `GROQ_API_KEY`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY`, `S2_API_KEY`: shell env > `./.env` > `~/.agent/.env` (written by `paidva setup`, mode 600). Never log, print (mask only) or commit them.
 - Providers: model spec `openai/gpt-oss-120b` = Groq, `gemini:<id>` = Google AI Studio, `openrouter:<id>` = OpenRouter.
   Limits are per account per model (Groq 200k tokens/day/model; OpenRouter free 50 requests/day total; Gemini free often 503).
 
@@ -16,7 +16,8 @@ Design docs: `../V1 - Research & Conversational Agent/` (PRD, plan, framework).
 - `src/answer.rs` Claim/Tag/Answer + invariant checks
 - `src/sandbox.rs` · `src/search.rs` (wikipedia, arxiv, semantic scholar, web) · `src/fetch.rs`
 - `src/agent.rs` the loop: assemble → route → plan → act → draft → verify → score → trace
-- `src/verify.rs` · `src/stats.rs` · `src/main.rs` (CLI: `init`, `ask`, `chat`, `trace`, `eval`, `report`)
+- `src/verify.rs` · `src/stats.rs` · `src/main.rs` (CLI, binary `paidva`: chat (default), `ask`, `setup`, `settings`, `doctor`, `init`, `trace`, `eval`, `report`)
+- `src/ui.rs` colours, spinner, answer/trace views (answers → stdout, progress → stderr) · `src/setup.rs` wizard, settings, doctor · `src/config.rs` `~/.agent/config.toml` (model chains, ui, sandbox timeout) + keys in `~/.agent/.env` (mode 600)
 - `src/eval.rs` + `evals/dev.jsonl` (starter set) → `evals/results/<set>-<system>-<model>.jsonl` (append-only, resumes)
 - `~/.agent/`: `agent.md`, `rules.toml`, `skills/*/SKILL.md`, `prompts/*.md`, `traces/`, `cache.db`
 
@@ -36,7 +37,7 @@ Design docs: `../V1 - Research & Conversational Agent/` (PRD, plan, framework).
 | Sandbox | sandbox-exec + uv venv | Docker | weaker isolation, macOS-only | Docker installed / Linux |
 | Search | Wikipedia + arXiv + Semantic Scholar APIs (no general web) | DDG scraping (dropped: evades bot detection), SearXNG | no news/blogs; S2 429s without `S2_API_KEY` | add Brave/Tavily key or pip-installed SearXNG |
 | Ranking | keyword (BM25-style) | fastembed | misses paraphrases | recall visibly poor in traces |
-| UI | plain CLI + REPL | ratatui TUI | less polish | after eval proves the system |
+| UI | styled line output + dialoguer prompts + rustyline REPL | ratatui full-screen TUI | no panes/scrollback widgets | users ask for side-by-side trace view |
 | Calibration | raw score, labelled "uncalibrated" | isotonic fit | not yet honest % | eval harness exists |
 
 ## Agents must not touch

@@ -1,30 +1,44 @@
 mod agent;
 mod answer;
+mod config;
 mod eval;
 mod llm;
 mod papers;
 mod sandbox;
 mod search;
+mod setup;
 mod stats;
+mod ui;
 mod verify;
 
-use agent::{Agent, Outcome};
-use answer::{Answer, Evidence, Tag};
+use agent::{Agent, Outcome, Report};
+use answer::{Answer, Evidence};
 use anyhow::Result;
 use clap::{Parser, Subcommand};
-use std::io::{BufRead, Write};
 use std::path::PathBuf;
+use std::time::Instant;
+use ui::{accent, bad, dim, good};
 
 #[derive(Parser)]
-#[command(name = "agent", about = "Research and statistics agent (V1)")]
+#[command(name = "paidva", version, about = "Paidva: the research agent that shows its work.\n\nRun with no command to chat (first run starts the setup).")]
 struct Cli {
     #[command(subcommand)]
-    cmd: Cmd,
+    cmd: Option<Cmd>,
 }
 
 #[derive(Subcommand)]
 enum Cmd {
-    /// Write default prompts, rules and skills into ~/.agent (existing files are kept unless --force).
+    /// Guided setup: API keys (checked live), models, Python sandbox.
+    Setup,
+    /// Change keys, models, colours, sandbox and more.
+    Settings,
+    /// Check that keys, models, Python and the sandbox all work.
+    Doctor {
+        /// Skip the live key checks (no network).
+        #[arg(long)]
+        offline: bool,
+    },
+    /// Install the default prompts, rules and skills into ~/.agent (existing files are kept unless --force).
     Init { #[arg(long)] force: bool },
     /// Ask one question and exit.
     Ask {
@@ -36,12 +50,12 @@ enum Cmd {
         #[arg(long)]
         json: bool,
     },
-    /// Interactive chat. /why shows the last trace, /quit exits.
+    /// Interactive chat (the default). Type /help inside for commands.
     Chat {
         #[arg(long = "file")]
         files: Vec<PathBuf>,
     },
-    /// Show the last trace.
+    /// Show the last trace: plan, evidence, code, what verification caught.
     Trace,
     /// Run a question set through the plain model or the full agent and grade it (resumes if interrupted).
     Eval {
@@ -69,164 +83,147 @@ enum Cmd {
     Report { files: Vec<PathBuf> },
 }
 
-const DEFAULTS: &[(&str, &str)] = &[
-    ("agent.md", include_str!("../home/agent.md")),
-    ("rules.toml", include_str!("../home/rules.toml")),
-    ("skills/statistics/SKILL.md", include_str!("../home/skills/statistics/SKILL.md")),
-    ("skills/probability/SKILL.md", include_str!("../home/skills/probability/SKILL.md")),
-    ("prompts/router.md", include_str!("../home/prompts/router.md")),
-    ("prompts/planner.md", include_str!("../home/prompts/planner.md")),
-    ("prompts/researcher.md", include_str!("../home/prompts/researcher.md")),
-    ("prompts/analyst.md", include_str!("../home/prompts/analyst.md")),
-    ("prompts/answer.md", include_str!("../home/prompts/answer.md")),
-    ("prompts/check.md", include_str!("../home/prompts/check.md")),
-    ("prompts/fix.md", include_str!("../home/prompts/fix.md")),
-    ("prompts/effects.md", include_str!("../home/prompts/effects.md")),
-    ("prompts/compare.md", include_str!("../home/prompts/compare.md")),
-    ("prompts/answer_check.md", include_str!("../home/prompts/answer_check.md")),
-];
+type Last = (Answer, Vec<Evidence>, Report);
 
-/// GROQ_API_KEY from the environment, else ./.env, else ~/.agent/.env.
-fn load_env() {
-    if std::env::var("GROQ_API_KEY").is_ok() { return; }
-    let home = PathBuf::from(std::env::var("HOME").unwrap_or_default());
-    for p in [PathBuf::from(".env"), home.join(".agent/.env")] {
-        if let Ok(text) = std::fs::read_to_string(&p) {
-            for line in text.lines() {
-                if let Some((k, v)) = line.split_once('=') {
-                    // SAFETY: single-threaded at this point (before the tokio runtime spawns work).
-                    unsafe { std::env::set_var(k.trim(), v.trim()) };
-                }
+/// Run one question with the live spinner, print the answer, and return it.
+async fn ask(agent: &Agent, q: &str, files: &[PathBuf], history: &[(String, String)]) -> Result<Option<Last>> {
+    let t = Instant::now();
+    ui::busy_start("thinking");
+    let res = agent.handle(q, files, history).await;
+    ui::busy_stop();
+    match res? {
+        Outcome::Ask(c) => { println!("\n  {} {}", accent("?"), ui::wrap(&c, ui::width(), 4)); Ok(None) }
+        Outcome::Answered { answer, evidence, report } => {
+            let calls = agent.llm.calls.lock().unwrap();
+            let st = ui::Stats { calls: calls.len(), tokens: calls.iter().map(|c| c.tokens).sum(), secs: t.elapsed().as_secs_f64() };
+            drop(calls);
+            ui::answer(&answer, &evidence, &report, &st);
+            Ok(Some((answer, evidence, report)))
+        }
+    }
+}
+
+fn banner(files: &[PathBuf]) {
+    let c = config::get();
+    let short = |v: &[String]| v.first().map(|m| m.rsplit('/').next().unwrap_or(m).trim_end_matches(":free").to_string()).unwrap_or_default();
+    println!();
+    println!("  {}  {}", accent(console::style("◆ Paidva").bold()), dim(format!("v{} · the research agent that shows its work", env!("CARGO_PKG_VERSION"))));
+    println!("    {}", dim(format!("main {} · fast {} · sandbox {}s", short(&c.models.main), short(&c.models.fast), c.sandbox.timeout_secs)));
+    if !files.is_empty() { println!("    {}", dim(format!("attached: {}", names(files)))); }
+    println!("    {}", dim("Ask anything. /help for commands · ↑ for history · Ctrl-D to quit"));
+}
+
+fn names(files: &[PathBuf]) -> String {
+    files.iter().map(|f| f.file_name().map(|n| n.to_string_lossy().into_owned()).unwrap_or_default()).collect::<Vec<_>>().join(", ")
+}
+
+fn help() {
+    let rows = [
+        ("/why", "how the last answer was built: plan, evidence, code, what verification caught"),
+        ("/sources", "every source read, with the passage"),
+        ("/code", "the Python behind every number"),
+        ("/json", "the last answer as JSON"),
+        ("/file <path>", "attach a data file (CSV etc.) for the analyst; /file alone lists them"),
+        ("/drop", "detach all files"),
+        ("/clear", "clear the screen and forget the conversation"),
+        ("/settings", "keys, models, colours, sandbox"),
+        ("/doctor", "health check"),
+        ("/quit", "leave (or Ctrl-D)"),
+    ];
+    println!();
+    for (c, d) in rows { println!("  {}  {}", accent(format!("{c:<14}")), dim(d)); }
+}
+
+async fn chat(mut files: Vec<PathBuf>) -> Result<()> {
+    banner(&files);
+    let agent = Agent::new()?;
+    let mut rl = rustyline::DefaultEditor::new()?;
+    let hist = config::dir().join("history.txt");
+    let _ = rl.load_history(&hist);
+    let mut history: Vec<(String, String)> = vec![];
+    let mut last: Option<Last> = None;
+    let prompt = format!("\n{} ", accent("›"));
+    loop {
+        let line = match rl.readline(&prompt) {
+            Ok(l) => l,
+            Err(rustyline::error::ReadlineError::Interrupted) => continue,
+            Err(rustyline::error::ReadlineError::Eof) => break,
+            Err(e) => return Err(e.into()),
+        };
+        let q = line.trim();
+        if q.is_empty() { continue; }
+        let _ = rl.add_history_entry(q);
+        let _ = rl.save_history(&hist);
+        let (cmd, arg) = q.split_once(' ').map(|(a, b)| (a, b.trim())).unwrap_or((q, ""));
+        let none = || println!("  {}", dim("nothing yet: ask a question first"));
+        match cmd {
+            "/quit" | "/exit" | "/q" => break,
+            "/help" | "/?" => help(),
+            "/why" => ui::trace().unwrap_or_else(|e| println!("  {}", dim(e))),
+            "/sources" => match &last { Some((_, ev, _)) => ui::sources(ev), None => none() },
+            "/code" => match &last { Some((_, ev, _)) => ui::code(ev), None => none() },
+            "/json" => match &last {
+                Some((a, ev, r)) => println!("{}", serde_json::to_string_pretty(&serde_json::json!({"answer": a, "evidence": ev, "report": r}))?),
+                None => none(),
+            },
+            "/file" if arg.is_empty() => println!("  {}", dim(if files.is_empty() { "no files attached".into() } else { format!("attached: {}", names(&files)) })),
+            "/file" => {
+                let p = PathBuf::from(shellish(arg));
+                if p.is_file() { println!("  {} attached {}", good("✓"), p.display()); files.push(p); }
+                else { println!("  {} no such file: {}", bad("✗"), p.display()); }
             }
-            return;
+            "/drop" => { files.clear(); println!("  {} files detached", good("✓")); }
+            "/clear" => { let _ = console::Term::stdout().clear_screen(); history.clear(); last = None; banner(&files); }
+            "/settings" => { setup::settings().await?; banner(&files); }
+            "/doctor" => { println!(); setup::doctor(true).await; }
+            c if c.starts_with('/') => println!("  {} unknown command {c} · /help lists them", bad("✗")),
+            _ => match ask(&agent, q, &files, &history).await {
+                Ok(Some(l)) => { history.push((q.into(), l.0.direct_answer.clone())); last = Some(l); }
+                Ok(None) => {}
+                Err(e) => println!("\n  {} {}", bad("error"), ui::wrap(&format!("{e:#}"), ui::width(), 8)),
+            },
         }
     }
-}
-
-fn init(force: bool) -> Result<()> {
-    let dir = PathBuf::from(std::env::var("HOME")?).join(".agent");
-    for (rel, body) in DEFAULTS {
-        let p = dir.join(rel);
-        if p.exists() && !force { println!("kept     {}", p.display()); continue; }
-        std::fs::create_dir_all(p.parent().unwrap())?;
-        std::fs::write(&p, body)?;
-        println!("wrote    {}", p.display());
-    }
-    if !sandbox::python(&dir.parent().unwrap().to_path_buf()).exists() {
-        println!("\nPython env missing. Create it with:\n  cd ~/.agent && uv venv py --python 3.13 && VIRTUAL_ENV=~/.agent/py uv pip install numpy scipy pandas statsmodels sympy scikit-learn");
-    }
+    println!("  {}", dim("bye"));
     Ok(())
 }
 
-fn render(a: &Answer, ev: &[Evidence], r: &agent::Report) {
-    println!("\n{}\n", a.direct_answer);
-    for c in &a.claims {
-        let tag = match c.tag { Tag::Observed => "observed", Tag::Sourced => "sourced", Tag::Inferred => "inferred", Tag::Knowledge => "knowledge", Tag::Speculation => "speculation" };
-        let ids = if c.evidence.is_empty() { String::new() } else { format!(" {}", c.evidence.join(",")) };
-        println!("  • {} [{tag}{ids}]", c.text);
-    }
-    for (b, (hyp, trail)) in a.bayes.iter().zip(&r.bayes) {
-        println!("\nBelief update — {hyp}");
-        println!("  prior {:.2}  ({})", trail[0], b.prior_reason);
-        for (s, p) in b.steps.iter().zip(&trail[1..]) {
-            println!("  {} LR {:.2} → {:.2}  ({})", s.evidence, s.likelihood_ratio.clamp(0.05, 20.0), p, s.reason);
-        }
-    }
-    for p in &r.pooled {
-        println!("\nPooled ({} studies, random effects): {} {:.3} [95% CI {:.3}–{:.3}], I² {:.0}%", p.k, p.measure, p.estimate, p.ci_low, p.ci_high, p.i2 * 100.0);
-    }
-    if !r.cross_checks.is_empty() {
-        println!("\nExact vs simulation:");
-        for c in &r.cross_checks {
-            println!("  {} {}: exact {:.6} · simulated {:.6} ± {:.6}", if c.agree { "✓" } else { "✗" }, c.name, c.exact, c.sim, c.se);
-        }
-    }
-    if !a.unknowns.is_empty() {
-        println!("\nStill uncertain:");
-        for u in &a.unknowns { println!("  - {u}"); }
-    }
-    // Only sources a claim or belief step actually cites, one line per URL.
-    let cited: std::collections::HashSet<&str> = a.claims.iter().flat_map(|c| c.evidence.iter())
-        .chain(a.bayes.iter().flat_map(|b| b.steps.iter().map(|s| &s.evidence))).map(String::as_str).collect();
-    let mut by_url: Vec<(&str, &str, Vec<&str>)> = vec![];
-    for e in ev.iter().filter(|e| !e.url.is_empty() && cited.contains(e.id.as_str())) {
-        match by_url.iter_mut().find(|x| x.0 == e.url) {
-            Some(x) => x.2.push(&e.id),
-            None => by_url.push((&e.url, &e.title, vec![&e.id])),
-        }
-    }
-    if !by_url.is_empty() {
-        println!("\nSources:");
-        for (url, title, ids) in by_url { println!("  [{}] {title} — {url}", ids.join(",")); }
-    }
-    let warn = if r.confidence < 0.45 { "  ⚠ low confidence: treat as a lead, not an answer" } else { "" };
-    println!("\nconfidence {:.2} (uncalibrated) · {} fixed round(s), {} relabelled, {} dropped{warn}", r.confidence, r.fix_rounds, r.relabelled, r.dropped);
-    for e in &r.errors { eprintln!("  note: {e}"); }
-}
-
-fn last_trace() -> Result<()> {
-    let p = PathBuf::from(std::env::var("HOME")?).join(".agent/traces/trace.jsonl");
-    let text = std::fs::read_to_string(&p)?;
-    let v: serde_json::Value = serde_json::from_str(text.lines().last().unwrap_or("{}"))?;
-    let r = &v["report"];
-    println!("question: {}", v["question"].as_str().unwrap_or(""));
-    println!("mode: {} · hard: {} · rules: {} · skills: {}", r["mode"], r["hard"], r["rules"], r["skills"]);
-    println!("plan: {}", serde_json::to_string_pretty(&r["plan"])?);
-    println!("first-draft issues: {}", serde_json::to_string_pretty(&r["first_draft_issues"])?);
-    for e in v["evidence"].as_array().into_iter().flatten() {
-        println!("\n[{}] {}\n{}", e["id"].as_str().unwrap_or(""), e["title"].as_str().unwrap_or(""), e["text"].as_str().unwrap_or("").chars().take(400).collect::<String>());
-        if let Some(code) = e["code"].as_str().filter(|c| !c.is_empty()) { println!("--- code ---\n{code}"); }
-    }
-    let calls = v["calls"].as_array().cloned().unwrap_or_default();
-    let tokens: u64 = calls.iter().filter_map(|c| c["tokens"].as_u64()).sum();
-    println!("\n{} model calls · {tokens} tokens · confidence {}", calls.len(), r["confidence"]);
-    Ok(())
+/// Expand a leading ~ and strip surrounding quotes from a pasted path.
+fn shellish(p: &str) -> String {
+    let p = p.trim_matches(|c| c == '"' || c == '\'');
+    match p.strip_prefix("~/") { Some(rest) => format!("{}/{rest}", std::env::var("HOME").unwrap_or_default()), None => p.to_string() }
 }
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    load_env();
+    config::load_env();
+    ui::init();
     match Cli::parse().cmd {
-        Cmd::Init { force } => init(force)?,
-        Cmd::Trace => last_trace()?,
-        Cmd::Eval { set, system, model, kind, limit, fresh, ids } => {
+        None => {
+            if !setup::ready() { setup::onboard().await?; }
+            if setup::ready() { chat(vec![]).await?; }
+        }
+        Some(Cmd::Setup) => setup::onboard().await?,
+        Some(Cmd::Settings) => setup::settings().await?,
+        Some(Cmd::Doctor { offline }) => { println!(); if !setup::doctor(!offline).await { std::process::exit(1); } }
+        Some(Cmd::Init { force }) => { setup::install(force, false)?; }
+        Some(Cmd::Trace) => ui::trace()?,
+        Some(Cmd::Eval { set, system, model, kind, limit, fresh, ids }) => {
             let out = eval::run(eval::Opts { set, system, model, kind, limit, fresh, ids }).await?;
             eval::report(&[out])?;
         }
-        Cmd::Report { files } => eval::report(&files)?,
-        Cmd::Ask { question, files, json } => {
+        Some(Cmd::Report { files }) => eval::report(&files)?,
+        Some(Cmd::Ask { question, files, json }) => {
             let agent = Agent::new()?;
-            match agent.handle(&question, &files, &[]).await? {
-                Outcome::Ask(q) => println!("{q}"),
-                Outcome::Answered { answer, evidence, report } => {
-                    if json { println!("{}", serde_json::to_string_pretty(&serde_json::json!({"answer": answer, "evidence": evidence, "report": report}))?); }
-                    else { render(&answer, &evidence, &report); }
+            if json {
+                if let Outcome::Answered { answer, evidence, report } = agent.handle(&question, &files, &[]).await? {
+                    println!("{}", serde_json::to_string_pretty(&serde_json::json!({"answer": answer, "evidence": evidence, "report": report}))?);
                 }
+            } else {
+                ask(&agent, &question, &files, &[]).await?;
             }
         }
-        Cmd::Chat { files } => {
-            let agent = Agent::new()?;
-            let mut history: Vec<(String, String)> = vec![];
-            let stdin = std::io::stdin();
-            loop {
-                print!("\n> ");
-                std::io::stdout().flush()?;
-                let mut line = String::new();
-                if stdin.lock().read_line(&mut line)? == 0 { break; }
-                let q = line.trim();
-                match q {
-                    "" => continue,
-                    "/quit" | "/exit" => break,
-                    "/why" => { last_trace().unwrap_or_else(|e| eprintln!("{e}")); continue; }
-                    _ => {}
-                }
-                match agent.handle(q, &files, &history).await {
-                    Ok(Outcome::Ask(c)) => { println!("{c}"); history.push((q.into(), c)); }
-                    Ok(Outcome::Answered { answer, evidence, report }) => { render(&answer, &evidence, &report); history.push((q.into(), answer.direct_answer)); }
-                    Err(e) => eprintln!("error: {e:#}"),
-                }
-            }
-        }
+        Some(Cmd::Chat { files }) => chat(files).await?,
     }
     Ok(())
 }

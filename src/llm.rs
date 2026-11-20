@@ -24,18 +24,15 @@ pub enum Role {
 }
 
 impl Role {
-    // Each Groq model has its own daily token cap (200k). Gemini's free tier is often overloaded (503s), so it
-    // comes after Groq; OpenRouter free models share 50 requests/day, so they sit last as an emergency fallback.
-    fn models(self) -> &'static [&'static str] {
-        match self {
-            Role::Fast => &["openai/gpt-oss-20b", "openai/gpt-oss-120b", "gemini:gemini-3.5-flash-lite", "openrouter:google/gemma-4-26b-a4b-it:free"],
-            Role::Main => &["openai/gpt-oss-120b", "qwen/qwen3.8-27b", "gemini:gemini-3.8-flash", "openrouter:google/gemma-4-31b-it:free"],
-        }
+    /// The fallback chain from ~/.agent/config.toml (defaults in config.rs).
+    fn models(self) -> Vec<String> {
+        let m = crate::config::get().models;
+        match self { Role::Fast => m.fast.clone(), Role::Main => m.main.clone() }
     }
 }
 
 /// (endpoint, api key env var, model id as the provider names it)
-fn route(spec: &str) -> (&'static str, &'static str, &str) {
+pub fn route(spec: &str) -> (&'static str, &'static str, &str) {
     if let Some(id) = spec.strip_prefix("openrouter:") { return (OPENROUTER, "OPENROUTER_API_KEY", id); }
     if let Some(id) = spec.strip_prefix("gemini:") { return (GEMINI, "GEMINI_API_KEY", id); }
     (GROQ, "GROQ_API_KEY", spec)
@@ -84,10 +81,34 @@ fn parse_duration(s: &str) -> Option<f64> {
     Some(total)
 }
 
+/// Checks a provider key by listing its models (free, no tokens used). Returns model specs as the config names them.
+pub async fn list_models(key_var: &str, key: &str) -> Result<Vec<String>> {
+    let (chat_url, prefix) = match key_var {
+        "GROQ_API_KEY" => (GROQ, ""),
+        "GEMINI_API_KEY" => (GEMINI, "gemini:"),
+        "OPENROUTER_API_KEY" => (OPENROUTER, "openrouter:"),
+        _ => bail!("{key_var} is not a model provider"),
+    };
+    let url = chat_url.replace("chat/completions", "models");
+    let resp = reqwest::Client::builder().timeout(Duration::from_secs(15)).build()?.get(&url).bearer_auth(key).send().await?;
+    let status = resp.status();
+    if status.as_u16() == 401 || status.as_u16() == 403 { bail!("the provider rejected this key ({status})"); }
+    if !status.is_success() { bail!("the provider answered {status}"); }
+    let v: Value = resp.json().await?;
+    let mut ids: Vec<String> = v["data"].as_array().into_iter().flatten()
+        .filter_map(|m| m["id"].as_str())
+        .map(|id| id.trim_start_matches("models/"))
+        // OpenRouter lists paid models too; Paidva stays on free ones.
+        .filter(|id| prefix != "openrouter:" || id.ends_with(":free"))
+        .map(|id| format!("{prefix}{id}")).collect();
+    ids.sort();
+    Ok(ids)
+}
+
 impl Llm {
     pub fn new(cache_path: &std::path::Path) -> Result<Self> {
         anyhow::ensure!(["GROQ_API_KEY", "OPENROUTER_API_KEY", "GEMINI_API_KEY"].iter().any(|k| std::env::var(k).is_ok()),
-            "no API key: set GROQ_API_KEY, GEMINI_API_KEY and/or OPENROUTER_API_KEY (see .env)");
+            "no API key yet: run `paidva setup` (or set GROQ_API_KEY, GEMINI_API_KEY or OPENROUTER_API_KEY)");
         let db = Connection::open(cache_path)?;
         db.execute("CREATE TABLE IF NOT EXISTS cache (k TEXT PRIMARY KEY, v TEXT NOT NULL)", [])?;
         Ok(Self {
@@ -127,9 +148,10 @@ impl Llm {
     #[allow(clippy::too_many_arguments)]
     async fn chat(&self, step: &str, role: Role, system: &str, user: &str, schema: &Value, temperature: f32, sample: u32) -> Result<String> {
         let mut last_err = anyhow!("no models configured");
+        let chain = role.models();
         let models: Vec<&str> = match (role, &self.main_model) {
             (Role::Main, Some(m)) => vec![m.as_str()],
-            _ => role.models().to_vec(),
+            _ => chain.iter().map(String::as_str).collect(),
         };
         for spec in models {
             let model = spec;
@@ -168,7 +190,7 @@ impl Llm {
                 });
                 if let Some(d) = pause {
                     let d = d.min(Duration::from_secs(60));
-                    eprintln!("  … pacing {model}: {:.0}s until its token window resets", d.as_secs_f64());
+                    crate::ui::note(&format!("pacing {model}: {:.0}s until its token window resets", d.as_secs_f64()));
                     tokio::time::sleep(d + Duration::from_millis(300)).await;
                 }
                 let t = Instant::now();
@@ -192,7 +214,7 @@ impl Llm {
                     last_err = anyhow!("{model}: rate limited (retry-after {wait:.0}s)");
                     // Waiting beats falling back: the fallback model is weaker at strict JSON.
                     if wait <= 60.0 && attempt < 3 {
-                        eprintln!("  … rate limited on {model}, waiting {wait:.0}s");
+                        crate::ui::note(&format!("rate limited on {model}, waiting {wait:.0}s"));
                         tokio::time::sleep(Duration::from_secs_f64(wait + 0.5)).await;
                         continue;
                     }

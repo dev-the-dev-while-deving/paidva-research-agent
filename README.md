@@ -121,26 +121,48 @@ First eval round, 2026-11-19. Each comparison runs the **same pinned model**, al
 ```bash
 git clone https://github.com/dev-the-dev-while-deving/paidva-research-agent
 cd paidva-research-agent
-cp .env.example .env              # add your key
-cargo build --release
-./target/release/agent init       # installs prompts, rules and skills into ~/.agent
+cargo install --path .     # installs the `paidva` command
+paidva                     # first run opens the setup wizard, then the chat
 ```
 
-**Ask something:**
+**The setup wizard** walks you through everything in about two minutes:
 
-```bash
-./target/release/agent ask "A test is 90% sensitive, 95% specific, prevalence 2%. P(sick | positive)?"
-./target/release/agent ask "Is the treatment effect significant?" --file examples/trial.csv
-./target/release/agent ask "..." --json     # answer, evidence and report as JSON
-./target/release/agent chat                 # /why shows the last trace, /quit exits
-```
+1. **Workspace:** installs the prompts, rules and skills into `~/.agent`, where you can edit them.
+2. **API keys:** you paste each free key into a hidden prompt. Paidva **checks it live** with the provider (a free model-list call that uses no tokens) and stores it in `~/.agent/.env`, which only you can read (mode 600).
+3. **Models:** keep the recommended fallback chains or pick your own from a **searchable list of the free models your keys can use**.
+4. **Python sandbox:** one confirmation installs it with uv.
+5. **Health check:** ends with `paidva doctor`, so you see that everything works.
+
+### The CLI
+
+| Command | What it does |
+|---|---|
+| `paidva` | Chat (runs the setup wizard first if there are no keys yet) |
+| `paidva ask "…" [--file data.csv] [--json]` | One question, then exit |
+| `paidva setup` | Run the setup wizard again |
+| `paidva settings` | The settings screen: keys (add, replace or remove), main and fast model chains, colours, live steps on or off, sandbox timeout, reinstall the Python sandbox or the default prompts, reset |
+| `paidva doctor [--offline]` | Health check: workspace, every key (checked live), models, Python, sandbox |
+| `paidva trace` | How the last answer was built |
+| `paidva eval` / `paidva report` | Run and compare evals |
+
+**Inside the chat:** live progress shows each step as it finishes (route, search, python, check, verify). Answers show colour-coded claim tags, a confidence meter, cross-checks and sources. You get line editing, persistent history (↑ and Ctrl-R) and these commands:
+
+| | |
+|---|---|
+| `/why` | Plan, evidence, code, and what verification caught |
+| `/sources` · `/code` · `/json` | Every source passage · the Python behind each number · the raw answer |
+| `/file <path>` · `/drop` | Attach data for the analyst · detach it |
+| `/settings` · `/doctor` | Change anything without leaving the chat · health check |
+| `/clear` · `/help` · `/quit` | |
+
+Settings live in `~/.agent/config.toml`, which you can also edit by hand. `NO_COLOR` is respected, and output piped to a file stays plain.
 
 **Run the evals:**
 
 ```bash
-./target/release/agent eval --set evals/dev.jsonl --system plain --model openai/gpt-oss-120b
-./target/release/agent eval --set evals/dev.jsonl --system full  --model openai/gpt-oss-120b
-./target/release/agent report evals/results/dev-*.jsonl
+paidva eval --set evals/dev.jsonl --system plain --model openai/gpt-oss-120b
+paidva eval --set evals/dev.jsonl --system full  --model openai/gpt-oss-120b
+paidva report evals/results/dev-*.jsonl
 ```
 
 Model specs: `openai/gpt-oss-120b` (Groq), `gemini:<model-id>`, `openrouter:<model-id>`.
@@ -150,7 +172,10 @@ Model specs: `openai/gpt-oss-120b` (Groq), `gemini:<model-id>`, `openrouter:<mod
 
 ```
 src/
-  main.rs      CLI: init · ask · chat · trace · eval · report
+  main.rs      CLI: chat · ask · setup · settings · doctor · trace · eval · report
+  ui.rs        colours, live progress, answer and trace views
+  setup.rs     setup wizard, settings screen, doctor
+  config.rs    ~/.agent/config.toml and the key store
   agent.rs     the loop: assemble → route → plan → act → draft → verify → score → trace
   answer.rs    Claim / Tag / Answer types and their invariants
   verify.rs    quote, number and inference checks

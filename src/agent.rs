@@ -114,9 +114,7 @@ pub struct Agent {
     pub dir: PathBuf,
 }
 
-fn step(label: &str, detail: &str) {
-    eprintln!("⏺ {label}  {detail}");
-}
+fn step(label: &str, detail: &str) { crate::ui::step(label, detail) }
 
 /// `term` occurs in `text` at a word start (so "chi" doesn't match "which").
 fn has_term(text: &str, term: &str) -> bool {
@@ -132,7 +130,7 @@ impl Agent {
 
     fn prompt(&self, name: &str) -> Result<String> {
         let p = self.dir.join("prompts").join(format!("{name}.md"));
-        std::fs::read_to_string(&p).with_context(|| format!("missing {} (run `agent init`)", p.display()))
+        std::fs::read_to_string(&p).with_context(|| format!("missing {} (run `paidva setup`)", p.display()))
     }
 
     fn rules(&self, q: &str) -> Result<Vec<Rule>> {

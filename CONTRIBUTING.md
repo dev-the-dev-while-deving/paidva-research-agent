@@ -6,7 +6,7 @@ Thanks for helping. Paidva is small on purpose, so the bar is: **does this make 
 
 1. **The model proposes, code decides.** If a check can be written as code, write it as code, not as a prompt instruction.
 2. **No number without a sandbox run or a quoted source. No fabricated citations.** Every change must keep both.
-3. **Measure it.** A behaviour change comes with a before/after from `agent eval` on the dev set (`--system full`, same pinned model).
+3. **Measure it.** A behaviour change comes with a before/after from `paidva eval` on the dev set (`--system full`, same pinned model).
 4. **Keep it lean.** Prefer the standard library and existing crates. Use concrete types, and add no new trait until a second implementation exists.
 5. **One runnable check per non-trivial module**, as a `#[cfg(test)]` test.
 
@@ -16,7 +16,7 @@ Thanks for helping. Paidva is small on purpose, so the bar is: **does this make 
 cp .env.example .env     # one model key is enough
 cargo build
 cargo test
-./target/debug/agent init --force
+./target/debug/paidva init --force
 ```
 
 ## Good first contributions

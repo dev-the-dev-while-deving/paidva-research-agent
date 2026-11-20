@@ -6,7 +6,7 @@ use std::path::{Path, PathBuf};
 use std::time::Duration;
 use tokio::process::Command;
 
-pub const TIMEOUT: Duration = Duration::from_secs(30);
+fn timeout() -> Duration { Duration::from_secs(crate::config::get().sandbox.timeout_secs.clamp(5, 600)) }
 const AGENTLIB: &str = include_str!("../home/agentlib.py");
 const MAX_OUT: usize = 6000;
 
@@ -62,9 +62,9 @@ pub async fn run(home: &Path, code: &str, files: &[PathBuf]) -> Result<Run> {
         .env_clear()
         .env("HOME", &tmp).env("TMPDIR", &tmp).env("MPLBACKEND", "Agg").env("OMP_NUM_THREADS", "2")
         .kill_on_drop(true);
-    let out = match tokio::time::timeout(TIMEOUT, cmd.output()).await {
+    let out = match tokio::time::timeout(timeout(), cmd.output()).await {
         Ok(o) => o?,
-        Err(_) => return Ok(Run { ok: false, stdout: String::new(), stderr: format!("timed out after {}s", TIMEOUT.as_secs()) }),
+        Err(_) => return Ok(Run { ok: false, stdout: String::new(), stderr: format!("timed out after {}s", timeout().as_secs()) }),
     };
     Ok(Run {
         ok: out.status.success(),
