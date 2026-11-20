@@ -1,0 +1,267 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1212" height="814" viewBox="0 0 1212 814" role="img" aria-label="paidva · answer">
+<rect width="100%" height="100%" rx="12" fill="#161514" stroke="#3a3732"/>
+<circle cx="22" cy="20" r="6" fill="#3a3732"/><circle cx="42" cy="20" r="6" fill="#3a3732"/><circle cx="62" cy="20" r="6" fill="#3a3732"/>
+<text x="606" y="25" fill="#8a857c" font-size="13" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,Menlo,monospace">paidva · answer</text>
+<g font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,monospace" font-size="14" xml:space="preserve">
+<text x="34.8" y="53.5" textLength="67.2" lengthAdjust="spacingAndGlyphs" fill="#ffaf5f" font-weight="700">◆ Paidva</text>
+<text x="118.8" y="53.5" textLength="529.2" lengthAdjust="spacingAndGlyphs" fill="#e4e1da">Using trial.csv, what are the average scores of groups A and B?</text>
+<text x="916.8" y="53.5" textLength="260.4" lengthAdjust="spacingAndGlyphs" fill="#e4e1da" opacity="0.55">@ trial.csv · context ~0.0k tok</text>
+<text x="26.4" y="71.5" textLength="739.2" lengthAdjust="spacingAndGlyphs" fill="#444444">╭──────────────────────────────────────────────────────────────────────────────────────╮</text>
+<text x="774.0" y="71.5" textLength="411.6" lengthAdjust="spacingAndGlyphs" fill="#444444">╭───────────────────────────────────────────────╮</text>
+<text x="26.4" y="89.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="757.2" y="89.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="774.0" y="89.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<rect x="790.8" y="76.0" width="84.0" height="18" fill="#ffaf5f"/>
+<text x="799.2" y="89.5" textLength="67.2" lengthAdjust="spacingAndGlyphs" fill="#000000" font-weight="700">Claims 5</text>
+<text x="891.6" y="89.5" textLength="75.6" lengthAdjust="spacingAndGlyphs" fill="#e4e1da" opacity="0.55">Sources 0</text>
+<text x="992.4" y="89.5" textLength="50.4" lengthAdjust="spacingAndGlyphs" fill="#e4e1da" opacity="0.55">Code 2</text>
+<text x="1068.0" y="89.5" textLength="75.6" lengthAdjust="spacingAndGlyphs" fill="#e4e1da" opacity="0.55">Reasoning</text>
+<text x="1177.2" y="89.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="26.4" y="107.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<rect x="261.6" y="94.0" width="487.2" height="18" fill="#303030"/>
+<text x="270.0" y="107.5" textLength="470.4" lengthAdjust="spacingAndGlyphs" fill="#e4e1da">Using trial.csv, what are the average scores of groups A</text>
+<text x="757.2" y="107.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="774.0" y="107.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="1177.2" y="107.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="26.4" y="125.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<rect x="261.6" y="112.0" width="487.2" height="18" fill="#303030"/>
+<text x="270.0" y="125.5" textLength="50.4" lengthAdjust="spacingAndGlyphs" fill="#e4e1da">and B?</text>
+<text x="757.2" y="125.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="774.0" y="125.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<rect x="790.8" y="112.0" width="16.8" height="18" fill="#5f5f00"/>
+<text x="790.8" y="125.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#ffaf5f">▸</text>
+<rect x="807.6" y="112.0" width="109.2" height="18" fill="#d7afff"/>
+<text x="816.0" y="125.5" textLength="67.2" lengthAdjust="spacingAndGlyphs" fill="#000000">inferred</text>
+<rect x="916.8" y="112.0" width="235.2" height="18" fill="#5f5f00"/>
+<text x="925.2" y="125.5" textLength="226.8" lengthAdjust="spacingAndGlyphs" fill="#e4e1da" font-weight="700">[4] Group A's average score</text>
+<text x="1177.2" y="125.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="26.4" y="143.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="757.2" y="143.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="774.0" y="143.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<rect x="790.8" y="130.0" width="369.6" height="18" fill="#5f5f00"/>
+<text x="925.2" y="143.5" textLength="235.2" lengthAdjust="spacingAndGlyphs" fill="#e4e1da" font-weight="700">is approximately 7.65 points</text>
+<text x="1177.2" y="143.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="26.4" y="161.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="43.2" y="161.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#ffaf5f">▌</text>
+<text x="60.0" y="161.5" textLength="537.6" lengthAdjust="spacingAndGlyphs" fill="#e4e1da" font-weight="700">The average score for group A is 72.63 and for group B is 64.98.</text>
+<text x="757.2" y="161.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="774.0" y="161.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<rect x="790.8" y="148.0" width="344.4" height="18" fill="#5f5f00"/>
+<text x="925.2" y="161.5" textLength="210.0" lengthAdjust="spacingAndGlyphs" fill="#e4e1da" font-weight="700">higher than Group B's. C2</text>
+<text x="1177.2" y="161.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="26.4" y="179.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="757.2" y="179.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="774.0" y="179.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<rect x="807.6" y="166.0" width="109.2" height="18" fill="#87d7d7"/>
+<text x="816.0" y="179.5" textLength="67.2" lengthAdjust="spacingAndGlyphs" fill="#000000">observed</text>
+<text x="925.2" y="179.5" textLength="235.2" lengthAdjust="spacingAndGlyphs" fill="#e4e1da">[1] The mean score for group</text>
+<text x="1177.2" y="179.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="26.4" y="197.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="43.2" y="197.5" textLength="193.2" lengthAdjust="spacingAndGlyphs" fill="#ffd7af" font-weight="700">Average Scores by Group</text>
+<text x="757.2" y="197.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="774.0" y="197.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="925.2" y="197.5" textLength="117.6" lengthAdjust="spacingAndGlyphs" fill="#e4e1da">A is 72.63. C2</text>
+<text x="1177.2" y="197.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="26.4" y="215.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="43.2" y="215.5" textLength="562.8" lengthAdjust="spacingAndGlyphs" fill="#e4e1da">Based on the data in trial.csv, the mean score for group A is 72.63</text>
+<text x="614.4" y="215.5" textLength="25.2" lengthAdjust="spacingAndGlyphs" fill="#ffaf5f">[1]</text>
+<text x="639.6" y="215.5" textLength="92.4" lengthAdjust="spacingAndGlyphs" fill="#e4e1da">, while the</text>
+<text x="757.2" y="215.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="774.0" y="215.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<rect x="807.6" y="202.0" width="109.2" height="18" fill="#87d7d7"/>
+<text x="816.0" y="215.5" textLength="67.2" lengthAdjust="spacingAndGlyphs" fill="#000000">observed</text>
+<text x="925.2" y="215.5" textLength="235.2" lengthAdjust="spacingAndGlyphs" fill="#e4e1da">[2] The mean score for group</text>
+<text x="1177.2" y="215.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="26.4" y="233.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="43.2" y="233.5" textLength="260.4" lengthAdjust="spacingAndGlyphs" fill="#e4e1da">mean score for group B is 64.98</text>
+<text x="312.0" y="233.5" textLength="25.2" lengthAdjust="spacingAndGlyphs" fill="#ffaf5f">[2]</text>
+<text x="337.2" y="233.5" textLength="411.6" lengthAdjust="spacingAndGlyphs" fill="#e4e1da">. This indicates that group A performed better on</text>
+<text x="757.2" y="233.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="774.0" y="233.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="925.2" y="233.5" textLength="117.6" lengthAdjust="spacingAndGlyphs" fill="#e4e1da">B is 64.98. C2</text>
+<text x="1177.2" y="233.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="26.4" y="251.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="43.2" y="251.5" textLength="411.6" lengthAdjust="spacingAndGlyphs" fill="#e4e1da">average than group B by approximately 7.65 points</text>
+<text x="463.2" y="251.5" textLength="25.2" lengthAdjust="spacingAndGlyphs" fill="#ffaf5f">[4]</text>
+<text x="488.4" y="251.5" textLength="235.2" lengthAdjust="spacingAndGlyphs" fill="#e4e1da">. The dataset consists of 99</text>
+<text x="757.2" y="251.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="774.0" y="251.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<rect x="807.6" y="238.0" width="109.2" height="18" fill="#87d7d7"/>
+<text x="816.0" y="251.5" textLength="67.2" lengthAdjust="spacingAndGlyphs" fill="#000000">observed</text>
+<text x="925.2" y="251.5" textLength="226.8" lengthAdjust="spacingAndGlyphs" fill="#e4e1da">[3] The dataset contains 99</text>
+<text x="1177.2" y="251.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="26.4" y="269.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="43.2" y="269.5" textLength="394.8" lengthAdjust="spacingAndGlyphs" fill="#e4e1da">rows with no missing values in the score column</text>
+<text x="446.4" y="269.5" textLength="25.2" lengthAdjust="spacingAndGlyphs" fill="#ffaf5f">[3]</text>
+<text x="471.6" y="269.5" textLength="252.0" lengthAdjust="spacingAndGlyphs" fill="#e4e1da">, ensuring that these averages</text>
+<text x="757.2" y="269.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="774.0" y="269.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="925.2" y="269.5" textLength="226.8" lengthAdjust="spacingAndGlyphs" fill="#e4e1da">rows with no missing values</text>
+<text x="1177.2" y="269.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="26.4" y="287.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="43.2" y="287.5" textLength="285.6" lengthAdjust="spacingAndGlyphs" fill="#e4e1da">are calculated from complete data.</text>
+<text x="757.2" y="287.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="774.0" y="287.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="925.2" y="287.5" textLength="193.2" lengthAdjust="spacingAndGlyphs" fill="#e4e1da">in the score column. C1</text>
+<text x="1177.2" y="287.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="26.4" y="305.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="757.2" y="305.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="774.0" y="305.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<rect x="807.6" y="292.0" width="109.2" height="18" fill="#87d7d7"/>
+<text x="816.0" y="305.5" textLength="67.2" lengthAdjust="spacingAndGlyphs" fill="#000000">observed</text>
+<text x="925.2" y="305.5" textLength="226.8" lengthAdjust="spacingAndGlyphs" fill="#e4e1da">[5] The score column has 87</text>
+<text x="1177.2" y="305.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="26.4" y="323.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="43.2" y="323.5" textLength="168.0" lengthAdjust="spacingAndGlyphs" fill="#ffd7af" font-weight="700">Data Characteristics</text>
+<text x="757.2" y="323.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="774.0" y="323.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="925.2" y="323.5" textLength="193.2" lengthAdjust="spacingAndGlyphs" fill="#e4e1da">unique values out of 99</text>
+<text x="1177.2" y="323.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="26.4" y="341.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="43.2" y="341.5" textLength="512.4" lengthAdjust="spacingAndGlyphs" fill="#e4e1da">The score column contains 87 unique values across the 99 rows</text>
+<text x="564.0" y="341.5" textLength="25.2" lengthAdjust="spacingAndGlyphs" fill="#ffaf5f">[5]</text>
+<text x="589.2" y="341.5" textLength="142.8" lengthAdjust="spacingAndGlyphs" fill="#e4e1da">, suggesting that</text>
+<text x="757.2" y="341.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="774.0" y="341.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="925.2" y="341.5" textLength="210.0" lengthAdjust="spacingAndGlyphs" fill="#e4e1da">total entries, indicating</text>
+<text x="1177.2" y="341.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="26.4" y="359.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="43.2" y="359.5" textLength="705.6" lengthAdjust="spacingAndGlyphs" fill="#e4e1da">some participants achieved identical scores. While the mean difference is clear, the</text>
+<text x="757.2" y="359.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="774.0" y="359.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="925.2" y="359.5" textLength="201.6" lengthAdjust="spacingAndGlyphs" fill="#e4e1da">some repeated scores. C1</text>
+<text x="1177.2" y="359.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="26.4" y="377.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="43.2" y="377.5" textLength="621.6" lengthAdjust="spacingAndGlyphs" fill="#e4e1da">provided evidence does not include standard deviations or p-values, so the</text>
+<text x="757.2" y="377.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="774.0" y="377.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="1177.2" y="377.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="26.4" y="395.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="43.2" y="395.5" textLength="680.4" lengthAdjust="spacingAndGlyphs" fill="#e4e1da">statistical significance of this difference cannot be determined from the current</text>
+<text x="757.2" y="395.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="774.0" y="395.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="790.8" y="395.5" textLength="67.2" lengthAdjust="spacingAndGlyphs" fill="#e4e1da" font-weight="700" opacity="0.55">EVIDENCE</text>
+<text x="874.8" y="395.5" textLength="218.4" lengthAdjust="spacingAndGlyphs" fill="#e4e1da" opacity="0.55">⏎ or click opens the claim</text>
+<text x="1177.2" y="395.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="26.4" y="413.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="43.2" y="413.5" textLength="92.4" lengthAdjust="spacingAndGlyphs" fill="#e4e1da">data alone.</text>
+<text x="757.2" y="413.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="774.0" y="413.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="790.8" y="413.5" textLength="75.6" lengthAdjust="spacingAndGlyphs" fill="#e4e1da" opacity="0.55">full-size</text>
+<text x="1177.2" y="413.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="26.4" y="431.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="757.2" y="431.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="774.0" y="431.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="790.8" y="431.5" textLength="16.8" lengthAdjust="spacingAndGlyphs" fill="#ffaf5f">C2</text>
+<text x="816.0" y="431.5" textLength="344.4" lengthAdjust="spacingAndGlyphs" fill="#e4e1da" font-weight="700">Load trial.csv and compute the mean score</text>
+<text x="1177.2" y="431.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="26.4" y="449.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="43.2" y="449.5" textLength="33.6" lengthAdjust="spacingAndGlyphs" fill="#e4e1da" font-weight="700" opacity="0.55">MEAN</text>
+<text x="757.2" y="449.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="774.0" y="449.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="790.8" y="449.5" textLength="361.2" lengthAdjust="spacingAndGlyphs" fill="#e4e1da" font-weight="700">for rows where group is 'A' and where group</text>
+<text x="1177.2" y="449.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="26.4" y="467.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="43.2" y="467.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#e4e1da">A</text>
+<text x="68.4" y="467.5" textLength="235.2" lengthAdjust="spacingAndGlyphs" fill="#ffaf5f">████████████████████████████</text>
+<text x="312.0" y="467.5" textLength="42.0" lengthAdjust="spacingAndGlyphs" fill="#e4e1da" font-weight="700">72.63</text>
+<text x="757.2" y="467.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="774.0" y="467.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="790.8" y="467.5" textLength="58.8" lengthAdjust="spacingAndGlyphs" fill="#e4e1da" font-weight="700">is 'B'.</text>
+<text x="1177.2" y="467.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="26.4" y="485.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="43.2" y="485.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#e4e1da">B</text>
+<text x="68.4" y="485.5" textLength="210.0" lengthAdjust="spacingAndGlyphs" fill="#d7af87">█████████████████████████</text>
+<text x="286.8" y="485.5" textLength="42.0" lengthAdjust="spacingAndGlyphs" fill="#e4e1da" font-weight="700">64.98</text>
+<text x="757.2" y="485.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="774.0" y="485.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<rect x="790.8" y="472.0" width="218.4" height="18" fill="#5f5f00"/>
+<text x="790.8" y="485.5" textLength="218.4" lengthAdjust="spacingAndGlyphs" fill="#ffd7af">│ result('mean_A', mean_A)</text>
+<text x="1177.2" y="485.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="26.4" y="503.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="757.2" y="503.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="774.0" y="503.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<rect x="790.8" y="490.0" width="218.4" height="18" fill="#5f5f00"/>
+<text x="790.8" y="503.5" textLength="218.4" lengthAdjust="spacingAndGlyphs" fill="#ffd7af">│ result('mean_B', mean_B)</text>
+<text x="1177.2" y="503.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="26.4" y="521.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="43.2" y="521.5" textLength="109.2" lengthAdjust="spacingAndGlyphs" fill="#e4e1da" opacity="0.55">Still unsure:</text>
+<text x="160.8" y="521.5" textLength="478.8" lengthAdjust="spacingAndGlyphs" fill="#e4e1da">Statistical significance of the difference between groups</text>
+<text x="757.2" y="521.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="774.0" y="521.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="790.8" y="521.5" textLength="285.6" lengthAdjust="spacingAndGlyphs" fill="#e4e1da" opacity="0.55">│ … 8 lines of code · c shows them</text>
+<text x="1177.2" y="521.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="26.4" y="539.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="43.2" y="539.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#e4e1da" opacity="0.55">·</text>
+<text x="60.0" y="539.5" textLength="478.8" lengthAdjust="spacingAndGlyphs" fill="#e4e1da">Standard deviations or confidence intervals for the means</text>
+<text x="757.2" y="539.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="774.0" y="539.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="790.8" y="539.5" textLength="67.2" lengthAdjust="spacingAndGlyphs" fill="#e4e1da" opacity="0.55">└ output</text>
+<text x="1177.2" y="539.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="26.4" y="557.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="43.2" y="557.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#e4e1da" opacity="0.55">·</text>
+<text x="60.0" y="557.5" textLength="420.0" lengthAdjust="spacingAndGlyphs" fill="#e4e1da">Potential confounding variables like hours_studied</text>
+<text x="757.2" y="557.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="774.0" y="557.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<rect x="790.8" y="544.0" width="218.4" height="18" fill="#5f5f00"/>
+<text x="807.6" y="557.5" textLength="201.6" lengthAdjust="spacingAndGlyphs" fill="#ffd7af">RESULT mean_A = 72.63125</text>
+<text x="1177.2" y="557.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="26.4" y="575.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="757.2" y="575.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="774.0" y="575.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<rect x="790.8" y="562.0" width="294.0" height="18" fill="#5f5f00"/>
+<text x="807.6" y="575.5" textLength="277.2" lengthAdjust="spacingAndGlyphs" fill="#ffd7af">RESULT mean_B = 64.97647058823529</text>
+<text x="1177.2" y="575.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="26.4" y="593.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="43.2" y="593.5" textLength="134.4" lengthAdjust="spacingAndGlyphs" fill="#87d787">━━━━━━━━━━━━━━━━</text>
+<text x="194.4" y="593.5" textLength="33.6" lengthAdjust="spacingAndGlyphs" fill="#e4e1da" font-weight="700">0.99</text>
+<text x="236.4" y="593.5" textLength="302.4" lengthAdjust="spacingAndGlyphs" fill="#e4e1da" opacity="0.55">confidence · uncalibrated   5 claims</text>
+<text x="547.2" y="593.5" textLength="75.6" lengthAdjust="spacingAndGlyphs" fill="#ffaf5f">· 1 risky</text>
+<text x="631.2" y="593.5" textLength="75.6" lengthAdjust="spacingAndGlyphs" fill="#e4e1da" opacity="0.55">→ sidebar</text>
+<text x="757.2" y="593.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="774.0" y="593.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="1177.2" y="593.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="26.4" y="611.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="43.2" y="611.5" textLength="369.6" lengthAdjust="spacingAndGlyphs" fill="#e4e1da" opacity="0.55">0 fix rounds · 5 calls · 6.3k tokens · 11.5s</text>
+<text x="757.2" y="611.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="774.0" y="611.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="1177.2" y="611.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="26.4" y="629.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="757.2" y="629.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="774.0" y="629.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="1177.2" y="629.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="26.4" y="647.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="43.2" y="647.5" textLength="386.4" lengthAdjust="spacingAndGlyphs" fill="#e4e1da" font-weight="700" opacity="0.55">NEXT · click one, or ⌃F to put it in the input</text>
+<text x="757.2" y="647.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="774.0" y="647.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="1177.2" y="647.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="26.4" y="665.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="43.2" y="665.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#ffaf5f">→</text>
+<text x="60.0" y="665.5" textLength="495.6" lengthAdjust="spacingAndGlyphs" fill="#e4e1da">Is the difference between groups statistically significant?</text>
+<text x="757.2" y="665.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="774.0" y="665.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="1177.2" y="665.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="26.4" y="683.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="43.2" y="683.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#ffaf5f">→</text>
+<text x="60.0" y="683.5" textLength="386.4" lengthAdjust="spacingAndGlyphs" fill="#e4e1da">What is the standard deviation for each group?</text>
+<text x="757.2" y="683.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="774.0" y="683.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="1177.2" y="683.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="26.4" y="701.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="43.2" y="701.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#ffaf5f">→</text>
+<text x="60.0" y="701.5" textLength="369.6" lengthAdjust="spacingAndGlyphs" fill="#e4e1da">How does hours_studied correlate with score?</text>
+<text x="757.2" y="701.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="774.0" y="701.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="1177.2" y="701.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#444444">│</text>
+<text x="26.4" y="719.5" textLength="739.2" lengthAdjust="spacingAndGlyphs" fill="#444444">╰──────────────────────────────────────────────────────────────────────────────────────╯</text>
+<text x="774.0" y="719.5" textLength="411.6" lengthAdjust="spacingAndGlyphs" fill="#444444">╰───────────────────────────────────────────────╯</text>
+<text x="26.4" y="737.5" textLength="1159.2" lengthAdjust="spacingAndGlyphs" fill="#ffaf5f">╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮</text>
+<text x="26.4" y="755.5" textLength="25.2" lengthAdjust="spacingAndGlyphs" fill="#ffaf5f">│ ›</text>
+<text x="60.0" y="755.5" textLength="268.8" lengthAdjust="spacingAndGlyphs" fill="#e4e1da" opacity="0.55">ask a follow-up · / for commands</text>
+<text x="1177.2" y="755.5" textLength="8.4" lengthAdjust="spacingAndGlyphs" fill="#ffaf5f">│</text>
+<text x="26.4" y="773.5" textLength="1159.2" lengthAdjust="spacingAndGlyphs" fill="#ffaf5f">╰────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯</text>
+<text x="34.8" y="791.5" textLength="100.8" lengthAdjust="spacingAndGlyphs" fill="#87d787">✓ done 11.5s</text>
+<text x="144.0" y="791.5" textLength="168.0" lengthAdjust="spacingAndGlyphs" fill="#e4e1da" opacity="0.55">· 5 calls · 6.3k tok</text>
+<text x="580.8" y="791.5" textLength="596.4" lengthAdjust="spacingAndGlyphs" fill="#e4e1da" opacity="0.55">←→ tabs · ↑↓ claims · ⏎ opens one · ⌃F follow-up · ⌃Y copy · / commands</text>
+</g>
+</svg>
