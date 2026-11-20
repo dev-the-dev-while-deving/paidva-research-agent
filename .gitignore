@@ -5,3 +5,11 @@ target/
 # Added by cargo
 
 /target
+
+# hidden test set: kept local so it stays unseen
+evals/hard.jsonl
+evals/data/simpson.csv
+evals/data/paired.csv
+evals/data/outlier.csv
+evals/data/injection.csv
+evals/results/*hard*

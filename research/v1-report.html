@@ -69,7 +69,7 @@ code{font:13.5px var(--mono);background:var(--panel);border:1px solid var(--rule
   <h2>What was tested</h2>
   <ul>
     <li><strong>Dev set (26 questions, starter):</strong> 6 factual, 10 classic probability, 3 research, 4 abstain or false premise, 3 rule-trigger.</li>
-    <li><strong>Hard set (16 questions, new):</strong> 8 probability problems with unfamiliar numbers (two-stage Bayes test, gambler's ruin at p = 0.47, unequal coupon collector, THTH waiting time, Poisson window, 10,000th digit of 1/7), Simpson's paradox data, a regression with one gross outlier, paired t on real data, a CSV with an instruction planted in a column, the ASA p-value statement, one fact, and two abstain items including a study that does not exist.</li>
+    <li><strong>Hard set (16 questions, new):</strong> probability problems with unfamiliar numbers, statistics on attached data files (including one with a planted prompt injection), one fact, and abstain items. This is the held-out test set, so its questions are not published.</li>
     <li><strong>Systems:</strong> <em>plain</em> = one call to the model asking for answer, confidence and citations; <em>full</em> = the agent. Same pinned model for both, no fallback.</li>
     <li><strong>Attack tests:</strong> 8 sandbox escape attempts, verifier gaming by code review, prompt injection through a data file.</li>
     <li><strong>Research:</strong> two Haiku agents surveyed 15 research products and the eval literature; I re-checked the key studies against their abstracts.</li>

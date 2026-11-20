@@ -2,6 +2,9 @@
 name = "agent"
 version = "0.1.0"
 edition = "2024"
+license = "AGPL-3.0-or-later"
+description = "A research and statistics agent that shows its work."
+repository = "https://github.com/dev-the-dev-while-deving/paidva-research-agent"
 
 [dependencies]
 anyhow = "1.0.104"

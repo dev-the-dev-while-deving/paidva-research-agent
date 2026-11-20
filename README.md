@@ -1,109 +1,152 @@
-# Paidva: Research Agent V1
+<div align="center">
 
-**A research and statistics agent that shows its work.** Every claim it makes is tagged with where it came from. Every number is computed in a sandbox, not recalled. Every citation is checked word for word against the source. Every answer gets a confidence score you can actually rank by.
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/hero-dark.svg">
+  <img src="assets/hero-light.svg" width="100%" alt="Paidva: the research agent that shows its work. An animated terminal asks a probability question; the agent runs Python, cross-checks by simulation, matches quotes verbatim, then prints tagged claims and a 0.86 confidence bar.">
+</picture>
 
-It's a Rust CLI running open-weight models on free API tiers, and it's the first of three versions. The long-term question is whether a small agent can **keep improving itself**, round after round, without stalling.
+<br>
 
-> **Status:** V1 is working end to end and has a first eval round. The early results are promising, but they are **not yet statistically significant**. See [Results](#results).
+[![License: AGPL v3](https://img.shields.io/badge/license-AGPL--3.0-7C5800?style=for-the-badge)](LICENSE)
+[![Rust](https://img.shields.io/badge/rust-2024_edition-291800?style=for-the-badge&logo=rust&logoColor=FFDDB3)](https://www.rust-lang.org)
+[![Cost](https://img.shields.io/badge/runs_on-%240%2Fmonth-FFB95C?style=for-the-badge&labelColor=291800)](#-quick-start)
+[![Status](https://img.shields.io/badge/status-V1_·_working-A0CFD0?style=for-the-badge&labelColor=291800)](#-results)
+
+**[Why](#-why-paidva)** · **[How it works](#-how-it-works)** · **[Results](#-results)** · **[Quick start](#-quick-start)** · **[Roadmap](#-roadmap)** · **[Contributing](#-contributing)**
+
+</div>
 
 ---
 
-## Why this exists
+## ✦ Why Paidva
 
-Today's research assistants have three documented problems:
+Ask an AI research tool a question and you get a confident paragraph with links. Look closer and three things go wrong:
 
-1. **Citations that exist but don't back the claim.** Deep-research systems keep their links working, but studies find large shares of their statements aren't supported by the sources they cite.
-2. **Confidence that means nothing.** A model says "95% sure" and is wrong. Few products give per-claim confidence at all.
-3. **Statistics nobody checks.** Tools that run code show you the code, but they don't verify it.
+| The problem | What Paidva does instead |
+|---|---|
+| **Citations that don't back the claim.** The link works, but the page doesn't say that. | Every quote must appear **word for word** in the fetched source. Then a separate checker, which sees only the claim and the passage, must agree that the passage supports it. |
+| **Confidence that means nothing.** "95% sure" and wrong. | Confidence is **computed from what passed verification**, not stated by the model. Sort by it and check the low ones first. |
+| **Maths nobody checked.** The tool shows you code, but nobody verifies it. | Every number comes from **sandboxed Python**, and probability answers are cross-checked against a simulation. |
 
-Paidva tackles all three in code, not in the prompt. The rule is: **the model proposes, Rust decides.** Any check that can be written as code is written as code.
+The rule behind all of it: **the model proposes, code decides.** Any check that *can* be code *is* code.
 
-## What an answer looks like
+## ✦ Every claim carries a tag
 
-Each claim in an answer carries one of these tags:
+| | Tag | Where it came from | How it's checked |
+|---|---|---|---|
+| 🟦 | `observed` | Code the agent ran | The number must appear in the sandbox output |
+| 🟩 | `sourced` | A paper or page | Verbatim quote match, then an independent support check |
+| 🟪 | `inferred` | Reasoning from other claims | Must cite the claims it rests on |
+| 🟧 | `knowledge` | The model's background knowledge | Allowed, but clearly labelled |
+| ⬜ | `speculation` | A guess | Allowed, but clearly labelled |
 
-| Tag | Meaning | How it's checked |
-|---|---|---|
-| `observed` | Came out of code the agent ran | The number must appear in the sandbox output |
-| `sourced` | Came from a paper or page | The quoted passage must appear verbatim in the fetched source, and a separate checker that sees only the claim and the passage must agree that the passage supports it |
-| `inferred` | Reasoned from other claims | Must cite the claims it depends on |
-| `knowledge` | Model background knowledge | Allowed, but labelled as such |
-| `speculation` | A guess | Allowed, but labelled as such |
+Claims that fail verification are **fixed or downgraded** to `speculation`, and the answer's confidence drops with them. Type `/why` in chat to see the full trace: the rules loaded, the tools called, the sources read and every check that ran.
 
-Claims that fail verification are either fixed or downgraded to `speculation`, and the answer's confidence drops. Ask `/why` in chat to see the full trace: rules loaded, tools called, sources read and checks run.
+## ✦ How it works
 
-## How it works
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/pipeline-dark.svg">
+  <img src="assets/pipeline-light.svg" width="100%" alt="Pipeline: assemble, route, plan, act, draft, verify, score, trace. Verify is highlighted: recompute every number, match every quote verbatim, cross-check exact maths against simulation, flag false premises.">
+</picture>
 
-```
-question
-  → assemble   load rules, skills, memory
-  → route      quick answer · maths/stats · research · abstain
-  → plan
-  → act        search (Wikipedia, arXiv, Semantic Scholar) · fetch full text · run Python in the sandbox
-  → draft      structured JSON answer with tagged claims
-  → verify     recompute numbers, check quotes verbatim, cross-check exact maths against simulation,
-               flag false premises, rewrite a headline that says more than the verified claims
-  → score      confidence from the verification results
-  → trace      everything saved for /why and for evals
-```
+<details>
+<summary><b>What happens at each stage</b></summary>
 
-- **Sandboxed Python** (numpy, scipy, pandas, statsmodels, sympy, scikit-learn) under macOS `sandbox-exec`: no network, no access to your home folder or keys, writes only to a temp dir, 30 s timeout.
-- **Exact vs. simulated cross-checks.** A probability answer must agree with a Monte Carlo run to within 3 standard errors, at 0.25% precision.
-- **Bayesian updates and study pooling** are done in code, never by the model.
-- **Editable rulebook and skills** (`~/.agent/rules.toml`, `skills/*/SKILL.md`, `prompts/*.md`) are read at runtime, so you can tune it without recompiling.
-- **Provider router** across Groq, Google AI Studio and OpenRouter, with structured output, a SQLite response cache, and back-off and fallback on rate limits.
+<br>
 
-## Results
+| Stage | What it does |
+|---|---|
+| **assemble** | Loads core rules, the contextual rules that match, skills (`SKILL.md`) and memory |
+| **route** | Decides whether this needs a quick answer, maths and statistics, research, or an abstention (false premise or unknowable) |
+| **plan** | Chooses which tools to use, in what order |
+| **act** | Searches Wikipedia, arXiv and Semantic Scholar, fetches full-text papers, and runs Python in the sandbox |
+| **draft** | Writes a structured JSON answer (enforced by a schema) in which every claim is tagged |
+| **verify** | Recomputes numbers, matches quotes verbatim, runs a support check per claim, cross-checks exact maths against simulation (within 3σ, at 0.25% precision), flags false premises, and rewrites a headline that says more than the verified claims |
+| **score** | Computes confidence from what passed |
+| **trace** | Saves everything for `/why` and for evals |
 
-First eval round (2026-11-19): 42 questions (a 26-question dev set and a 16-question hard set with fresh numbers the model can't have memorised). Each comparison runs the **same pinned model**, either alone (`plain`) or inside the agent (`full`).
+</details>
+
+**Under the hood**
+
+- 🔒 **Sandboxed Python** (numpy, scipy, pandas, statsmodels, sympy, scikit-learn) under macOS `sandbox-exec`. It has no network, no access to your home folder or keys, writes only to a temp dir, and times out after 30 s. It was attack-tested against network escapes, key theft and writes to your home folder.
+- 📐 **Bayesian updates and study pooling** are computed in code, never by the model.
+- 📝 **Editable rulebook, skills and prompts** live in `~/.agent/` and are read at runtime, so you can tune behaviour without recompiling.
+- 🔀 **Provider router** across Groq, Google AI Studio and OpenRouter, with schema-enforced output, a SQLite response cache, and back-off and fallback on rate limits.
+- 🧪 **Built-in eval harness:** `plain` (the model alone) vs. `full` (Paidva) on the same pinned model, with graders, calibration error and paired McNemar tests.
+
+## ✦ Results
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/results-dark.svg">
+  <img src="assets/results-light.svg" width="100%" alt="With Paidva on qwen3.8-27b: dev accuracy 65% to 87%, hard accuracy 33% to 44%, most-confident half right 38% to 80%, calibration error 0.64 to 0.24, dead citations 20% to 0%.">
+</picture>
+
+First eval round, 2026-11-19. Each comparison runs the **same pinned model**, alone (`plain`) and inside Paidva (`full`).
+
+<details>
+<summary><b>Full table</b></summary>
+
+<br>
 
 | Set · model | System | Accuracy | Most-confident half right | Calibration error | Dead citations |
 |---|---|---|---|---|---|
 | Dev · qwen3.8-27b | plain | 65% | 78% | 0.34 | 2/10 |
-| Dev · qwen3.8-27b | **full** | **87%** | **100%** | **0.13** | **0/17** |
+| Dev · qwen3.8-27b | **Paidva** | **87%** | **100%** | **0.13** | **0/17** |
 | Hard · qwen3.8-27b | plain | 33% | 38% | 0.64 | 0/1 |
-| Hard · qwen3.8-27b | **full** | **44%** | **80%** | **0.24** | **0/27** |
+| Hard · qwen3.8-27b | **Paidva** | **44%** | **80%** | **0.24** | **0/27** |
 | Dev · gpt-oss-120b | plain | 91% | 100% | 0.14 | 4/36 |
-| Dev · gpt-oss-120b | **full** | **94%** | 100% | **0.07** | **0/111** |
+| Dev · gpt-oss-120b | **Paidva** | **94%** | 100% | **0.07** | **0/111** |
 
-**What this shows**
+</details>
 
-- **Zero dead citations** across every full-agent run. The plain models had 11–20% dead links.
-- **On a weaker model, the framework gives a large lift:** better accuracy and much better calibration. The agent never lost a question the plain model got right.
-- **Confidence becomes useful.** On the hard set, plain qwen's most-confident answers were right 38% of the time, so its confidence carried no information. The agent's most-confident answers were right 80% of the time, so you know what to check first.
-- **On a strong model, accuracy barely moves.** The gain there is calibration and clean citations.
+**What it shows**
+- ✅ **Zero dead citations** across every Paidva run (the plain models had 11–20%).
+- ✅ **A large lift on a weaker model**, and Paidva **never lost a question** the plain model got right.
+- ✅ **Confidence becomes useful.** On the hard set, plain qwen's most-confident answers were right 38% of the time, so its confidence was noise. With Paidva they were right 80% of the time.
+- ➖ **On a strong model, accuracy barely moves.** The gain there is calibration and clean citations.
 
 **What it doesn't show yet**
+- ⚠️ **Not statistically significant** (paired McNemar p ≥ 0.25). Free-tier rate limits left only 8–16 shared questions per comparison.
+- ⚠️ **It costs more:** 10–25× the tokens and 30–70 s per question.
+- ⚠️ **Research answers are faithful but thin** (rubric 0.42–0.62), because there's no general web search yet.
+- ⚠️ **Confidence weights are hand-set.** The score ranks answers well, but "0.8" doesn't yet mean 80%.
 
-- **Nothing is statistically significant yet** (paired McNemar p ≥ 0.25). Free-tier rate limits left only 8–16 shared questions per comparison.
-- **It's expensive:** 10–25× the tokens and 30–70 s per question.
-- **Research answers are faithful but thin** (rubric 0.42–0.62), because retrieval has no general web search.
-- **Confidence weights are hand-set**, so the score ranks well but "0.8" doesn't yet mean 80%.
+> The dev set and its results are in `evals/`. The **hard set is a held-out test and is deliberately not published**, so that it stays unseen by models and by tuning. Answer keys were computed in Python, not recalled.
 
-`agent report evals/results/*.jsonl` reproduces every number above. Answer keys were computed in Python, not recalled.
+## ✦ Quick start
 
-## Quick start
-
-Requirements: Rust (edition 2024), macOS (for `sandbox-exec`), [uv](https://docs.astral.sh/uv/), and a free [Groq](https://console.groq.com) API key.
+**You need:** Rust, macOS (for `sandbox-exec`), [uv](https://docs.astral.sh/uv/), and one free API key. [Groq](https://console.groq.com) is the default; Gemini and OpenRouter also work.
 
 ```bash
-echo "GROQ_API_KEY=..." > .env  # optional: GEMINI_API_KEY, OPENROUTER_API_KEY
+git clone https://github.com/dev-the-dev-while-deving/paidva-research-agent
+cd paidva-research-agent
+cp .env.example .env              # add your key
 cargo build --release
-./target/release/agent init     # writes prompts, rules and skills into ~/.agent
-./target/release/agent ask "If a test is 90% sensitive and 95% specific and prevalence is 2%, what's P(disease | positive)?"
-./target/release/agent ask "Is the treatment effect significant?" --file examples/trial.csv
-./target/release/agent chat     # /why shows the last trace, /quit exits
+./target/release/agent init       # installs prompts, rules and skills into ~/.agent
 ```
 
-Run evals:
+**Ask something:**
 
 ```bash
-./target/release/agent eval --set evals/hard.jsonl --system plain --model openai/gpt-oss-120b
-./target/release/agent eval --set evals/hard.jsonl --system full  --model openai/gpt-oss-120b
-./target/release/agent report evals/results/hard-*.jsonl
+./target/release/agent ask "A test is 90% sensitive, 95% specific, prevalence 2%. P(sick | positive)?"
+./target/release/agent ask "Is the treatment effect significant?" --file examples/trial.csv
+./target/release/agent ask "..." --json     # answer, evidence and report as JSON
+./target/release/agent chat                 # /why shows the last trace, /quit exits
 ```
 
-## Layout
+**Run the evals:**
+
+```bash
+./target/release/agent eval --set evals/dev.jsonl --system plain --model openai/gpt-oss-120b
+./target/release/agent eval --set evals/dev.jsonl --system full  --model openai/gpt-oss-120b
+./target/release/agent report evals/results/dev-*.jsonl
+```
+
+Model specs: `openai/gpt-oss-120b` (Groq), `gemini:<model-id>`, `openrouter:<model-id>`.
+
+<details>
+<summary><b>Project layout</b></summary>
 
 ```
 src/
@@ -118,25 +161,38 @@ src/
   stats.rs     Bayes updates, pooling, cross-checks
   eval.rs      graders, calibration, paired comparisons
 home/          default prompts, rules and skills (installed to ~/.agent)
-evals/         question sets, data files, results
+evals/         dev question set, data, results
 research/      market survey, eval-method notes, V1 field report
+assets/        README artwork
 ```
 
-## Roadmap
+</details>
 
-| Version | Goal | Key idea |
-|---|---|---|
-| **V1** *(this repo)* | Prove the system beats the same model on its own | Evidence tags, sandboxed maths, claim-level citation checks, calibrated confidence |
-| **V2** | The agent proposes its own improvements; I approve them | Nightly loop: failed traces → grouped by cause → one proposed rule, skill or prompt change → tested on the dev set → reviewed by me. Also an A/B test of a **Nyaya-logic layer** (evidence by *pramana*, a *hetvabhasa* fallacy check, *vada*-style debate) |
-| **V3** | The agent keeps improving itself, round after round | An archive of agent variants (Darwin Gödel Machine-style) evolving small, testable units such as rules, skills and examples rather than code, plus a self-play curriculum. The question: do improvements **compound** or stall? |
+## ✦ Roadmap
 
-**Next for V1:** a tested statistics library inside the sandbox, a deterministic audit of attached data, honest failure messages, a rate-limit-aware scheduler, and growing the eval to 150+ questions with generated maths variants.
+```mermaid
+flowchart LR
+    V1["<b>V1 · now</b><br/>Beat the bare model<br/><i>tags · sandbox · verified citations</i>"]
+    V2["<b>V2</b><br/>Agent proposes its own improvements<br/><i>you approve · Nyaya logic layer</i>"]
+    V3["<b>V3</b><br/>Agent keeps improving itself<br/><i>do gains compound or stall?</i>"]
+    V1 --> V2 --> V3
+```
 
-## Constraints
+- **V1 (now):** prove the system beats the same model on its own. Next up: a tested statistics library inside the sandbox, a deterministic audit for attached data, honest failure messages, a rate-limit-aware scheduler, and 150+ eval questions with generated maths variants.
+- **V2:** a nightly loop turns failed traces into one proposed rule, skill or prompt change per failure cause. Each change is tested on the dev set and then goes to you for approval. V2 also A/B tests a **Nyaya-logic layer**: evidence typed by *pramana*, a *hetvabhasa* fallacy check, and *vada*-style debate. A "no, it doesn't help" is a valid result.
+- **V3:** an archive of agent variants (in the style of the Darwin Gödel Machine) that evolves small, testable units (rules, skills, examples) instead of code, plus a self-play curriculum. The research question is whether improvements **compound** round after round or stall after one.
 
-- **$0/month:** free API tiers only, everything else on a laptop.
-- **Two non-negotiables:** no number without a sandbox run or a quoted source, and no fabricated citations.
+## ✦ Contributing
 
----
+Contributions are welcome, especially **new eval questions with answer keys computed in code**, sandbox hardening, retrieval sources and Linux sandbox support. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Built by [Devarshee Mude](https://github.com/dev-the-dev-while-deving).
+Two rules any change must keep: **no number without a sandbox run or a quoted source**, and **no fabricated citations**.
+
+## ✦ License
+
+[AGPL-3.0](LICENSE). Use it, fork it and build on it. If you run a modified version as a service, share your changes.
+
+<div align="center">
+<br>
+<sub>Built by <a href="https://github.com/dev-the-dev-while-deving">Devarshee Mude</a> · runs on free tiers · $0/month</sub>
+</div>
