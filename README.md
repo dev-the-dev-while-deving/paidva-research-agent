@@ -20,11 +20,17 @@ Every number comes from sandboxed Python, every quote is matched word for word, 
 
 ## Install
 
-Runs on **macOS** (Apple Silicon; Intel builds coming), **Linux** (x86_64 and ARM64) and **Windows through [WSL](https://learn.microsoft.com/windows/wsl/install)** (open Ubuntu and use the Linux build). You need [uv](https://docs.astral.sh/uv/) for the Python sandbox, and on Linux/WSL also bubblewrap (`sudo apt install bubblewrap`). Then:
+Runs on **macOS** (Apple Silicon; Intel builds coming), **Linux** (Fedora, Ubuntu, Debian, Arch — x86_64 and ARM64) and **Windows through [WSL](https://learn.microsoft.com/windows/wsl/install)** (open Ubuntu and use the Linux build). You need [uv](https://docs.astral.sh/uv/) for the Python sandbox, and on Linux/WSL also bubblewrap (`sudo dnf install bubblewrap` on Fedora, `sudo apt install bubblewrap` on Ubuntu/Debian). Then:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/dev-the-dev-while-deving/paidva-research-agent/main/install.sh | sh
 paidva
+```
+
+On **Fedora / RHEL**, you can also install the `.rpm` directly with `dnf` (which installs `bubblewrap` automatically and puts `paidva` in `/usr/bin`):
+
+```bash
+sudo dnf install https://github.com/dev-the-dev-while-deving/paidva-research-agent/releases/latest/download/paidva-x86_64-unknown-linux-gnu.rpm
 ```
 
 The first run is a short setup: workspace, model, optional keys, sandbox. Paidva tells you when a new version is out; `paidva update` installs it.
