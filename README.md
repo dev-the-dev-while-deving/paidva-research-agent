@@ -133,11 +133,13 @@ In the chat, typing always goes to the input and `/` opens the command menu:
 
 | | |
 |---|---|
-| `/deep [question]` | More searches and sources, an extra verification round, and a second opinion from another model (`/deep` alone re-runs the last question) |
+| `/deep [question]` | More searches and sources, up to 4 adaptive rounds, extra verification, and a second opinion (`/deep` alone re-runs the last question) |
+| `@file` | Reference a local `.pdf`, `.csv`, `.tsv`, `.json`, `.md` or `.txt` in the current folder right inside your question (live `@` picker) |
+| `/feedback [bug\|idea] <msg>` | Send a bug report or idea directly from the terminal (or `paidva feedback "…"`) |
 | `/model` · `/model fast` | Switch models: local Ollama models and everything your keys can use |
 | `/skills` · `/skills new <name>` | See and edit skills (how Paidva handles a kind of question), or write your own |
 | `/rules` · `/rules add <text>` | See and edit the rules every answer follows, or add one |
-| `/file` · `/resume` · `/watch` · `/export` · `/copy` | Attach data (or just name a `.csv`/`.tsv`/`.json` file in your question) · reopen a chat · re-run a question daily · save as Markdown · copy |
+| `/file` · `/resume` · `/watch` · `/export` · `/copy` | Attach data/PDFs · reopen a chat · re-run a question daily · save as Markdown · copy |
 
  With the input empty, **←→** switch sidebar tabs and **↑↓** pick a claim; **⏎** or a click opens it full-size with its evidence. In the pop-up, **x** marks a claim wrong (saved as feedback for Paidva's self-improvement loop). **⌃F** puts a suggested follow-up in the input, **⌃Y** copies, **⌃C** stops a run and `/help` shows every key. The mouse works too; **⌃O** switches it off so a plain drag selects text (and back on).
 
