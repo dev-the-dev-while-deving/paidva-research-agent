@@ -53,7 +53,7 @@ Why Qwen 3.5 9B: among models that fit in about 10 GB, it scores best on what Pa
 
 Cloud keys still help as fallbacks (Paidva moves to them if the local model fails), and the second opinion on hard questions comes from a different model family. Switch any time with `/model`.
 
-**Web search** is optional: add a free [Tavily](https://app.tavily.com) key (1,000 searches a month) in `paidva settings`, and Paidva searches the open web as well as Wikipedia, arXiv and Semantic Scholar. Web pages get the same word-for-word quote check as papers.
+**Web search** is optional: add a free [Tavily](https://app.tavily.com) key (1,000 searches a month) in `paidva settings`, and Paidva searches the open web as well as Wikipedia, arXiv, Semantic Scholar and OpenAlex (or fetches any URL or arXiv link you paste directly in your question). Web pages get the same word-for-word quote check as papers.
 
 
 ## What you see
@@ -127,11 +127,11 @@ In the chat, typing always goes to the input and `/` opens the command menu:
 
 | | |
 |---|---|
-| `/deep <question>` | More searches and sources, an extra verification round, and a second opinion from another model |
+| `/deep [question]` | More searches and sources, an extra verification round, and a second opinion from another model (`/deep` alone re-runs the last question) |
 | `/model` · `/model fast` | Switch models: local Ollama models and everything your keys can use |
 | `/skills` · `/skills new <name>` | See and edit skills (how Paidva handles a kind of question), or write your own |
 | `/rules` · `/rules add <text>` | See and edit the rules every answer follows, or add one |
-| `/file` · `/resume` · `/watch` · `/export` · `/copy` | Attach data · reopen a chat · re-run a question daily · save as Markdown · copy |
+| `/file` · `/resume` · `/watch` · `/export` · `/copy` | Attach data (or just name a `.csv`/`.tsv`/`.json` file in your question) · reopen a chat · re-run a question daily · save as Markdown · copy |
 
  With the input empty, **←→** switch sidebar tabs and **↑↓** pick a claim; **⏎** or a click opens it full-size with its evidence. In the pop-up, **x** marks a claim wrong (saved as feedback for Paidva's self-improvement loop). **⌃F** puts a suggested follow-up in the input, **⌃Y** copies, **⌃C** stops a run and `/help` shows every key. The mouse works too; **⌃O** switches it off so a plain drag selects text (and back on).
 
