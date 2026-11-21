@@ -49,8 +49,21 @@ if [ "$os" = Linux ] && ! command -v bwrap >/dev/null 2>&1; then
 fi
 
 if ! command -v uv >/dev/null 2>&1; then
-  say "! uv is needed for the Python sandbox. Install it with:"
-  say "    curl -LsSf https://astral.sh/uv/install.sh | sh"
+  if [ -t 0 ] && [ -r /dev/tty ]; then
+    printf '  ! uv is needed for the Python sandbox. Install uv now? [Y/n] '
+    read -r ans < /dev/tty || ans="n"
+    case "$ans" in
+      "" | y | Y | yes | YES)
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        ;;
+      *)
+        say "Install uv later with: curl -LsSf https://astral.sh/uv/install.sh | sh"
+        ;;
+    esac
+  else
+    say "! uv is needed for the Python sandbox. Install it with:"
+    say "    curl -LsSf https://astral.sh/uv/install.sh | sh"
+  fi
 fi
 
 if ! command -v ollama >/dev/null 2>&1; then
